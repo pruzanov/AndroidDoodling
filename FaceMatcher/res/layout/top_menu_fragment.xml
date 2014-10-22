@@ -1,0 +1,75 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fullscreen_content_controls"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical|center_horizontal"
+    android:orientation="vertical">
+    
+    <LinearLayout
+    android:id="@+id/service_controls"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top|fill_horizontal"
+    android:orientation="horizontal">
+    
+    <Button
+        android:id="@+id/button_show_about"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="40dp"
+        android:layout_weight="1"
+        android:background="#0055cc"
+        android:text="@string/show_about_button" />
+
+    <Button
+        android:id="@+id/button_settings"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="1"
+        android:background="#0055cc"
+        android:text="@string/settings_button" />
+
+    <Button
+        android:id="@+id/button_show_leaderboard"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="1"
+        android:background="#0055cc"
+        android:text="@string/show_leaderboard_button" />
+    
+    </LinearLayout>
+    
+    <Button
+        android:id="@+id/button_matchname"
+        style="?metaButtonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginBottom="40dp"
+        android:background="#0055cc"
+        android:text="@string/matchname_button" />
+
+    <Button
+        android:id="@+id/button_matchface"
+        style="?metaButtonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginBottom="40dp"
+        android:background="#0055cc"
+        android:text="@string/matchface_button" />
+
+    <Button
+        android:id="@+id/button_timedgame"
+        style="?metaButtonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#0055cc"
+        android:text="@string/timedgame_button" />
+
+</LinearLayout>

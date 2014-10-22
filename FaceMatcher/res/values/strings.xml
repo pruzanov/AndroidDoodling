@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FaceMatcher</string>
+    <string name="show_about_button">ABT</string>
+    <string name="settings_button">SET</string>
+    <string name="show_leaderboard_button">Highscores</string>
+    <string name="matchname_button">Pick the Right Name</string>
+    <string name="matchface_button">Pick the right Face</string>
+    <string name="timedgame_button">Timed Matching</string>
+    <string name="go_home_button">Home</string>
+    <string name="image_type">image/png</string>
+    <string name="score_string">Score:</string>
+    <string name="timer_string">00:00</string>
+    <string name="sample_name_string">Robert De Niro</string>
+
+</resources>

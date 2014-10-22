@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/name_match_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_vertical|center_horizontal"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/game_feedbacks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|fill_horizontal"
+        android:orientation="horizontal" >
+        <TextView 
+         android:id="@+id/player_score"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:textSize="16sp"
+         android:textStyle="bold"
+         android:text="@string/score_string"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/face_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:contentDescription="@string/image_type"
+        android:src="@drawable/deniro" />
+
+    <RadioGroup
+        android:id="@+id/name_options"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <RadioButton android:id="@+id/name_option_1"
+            android:textSize="20sp"
+            android:text="Dmitri Mendeleev"
+            android:onClick="onRadioButtonClicked" />
+        <RadioButton android:id="@+id/name_option_2"
+            android:textSize="20sp" 
+            android:text="Jonas Salk"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton android:id="@+id/name_option_3"
+            android:textSize="20sp" 
+            android:text="John Carmack"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton android:id="@+id/name_option_4"
+            android:textSize="20sp" 
+            android:text="Robert De Niro"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
+
+</LinearLayout>
