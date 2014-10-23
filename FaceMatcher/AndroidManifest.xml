@@ -3,10 +3,10 @@
     package="ca.on.oicr.pde.facematcher"
     android:versionCode="1"
     android:versionName="1.0" >
-    <supports-screens android:smallScreens="true"
+    <supports-screens android:smallScreens="false"
                       android:normalScreens="true"
-                      android:largeScreens="false"
-                      android:xlargeScreens="false"/>
+                      android:largeScreens="true"
+                      android:xlargeScreens="true" />
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="21" />

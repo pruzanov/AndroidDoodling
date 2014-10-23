@@ -138,16 +138,25 @@ public class FaceMatchActivity extends Activity implements
 			// TODO launch game of first type
 			Log.d(TAG, "Would have switched to NameMatching Game");
 			// mFragmentManager = getFragmentManager();
+			/*
+			 * DEBUGGING: building a dummy fragment with test data
+			 */
 			String[] names = {"Che Gevara","Robert De Niro","Pope Francis","Bill Gates"};
 			NameMatchFragment mockFragment = NameMatchFragment.instanceOf(getResources().getDrawable(R.drawable.deniro), names);
 			mFragmentManager = getFragmentManager();
 			FragmentTransaction fragmentTransaction = mFragmentManager .beginTransaction();	
 			fragmentTransaction.replace(R.id.ui_fragment_container, mockFragment);
 			fragmentTransaction.commit();
+			/*
+			 * DEBUGGING ENDS
+			 */
 			break;
 		case TopMenuFragment.FACE_MATCH:
 			// TODO launch game of second type
 			Log.d(TAG, "Would have switched to FaceMatching Game");
+			/*
+			 * DEBUGGING: building a dummy fragment with test data
+			 */
 			break;
 		case TopMenuFragment.TIMED_MATCH:
 			// TODO launch game of third type:
