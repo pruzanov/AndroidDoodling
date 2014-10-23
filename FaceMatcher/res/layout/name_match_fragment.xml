@@ -15,7 +15,7 @@
          android:id="@+id/player_score"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:textSize="16sp"
+         android:textSize="20sp"
          android:textStyle="bold"
          android:text="@string/score_string"/>
     </LinearLayout>
@@ -31,25 +31,30 @@
 
     <RadioGroup
         android:id="@+id/name_options"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginLeft="20dp"
         android:layout_weight="1" >
 
         <RadioButton android:id="@+id/name_option_1"
-            android:textSize="20sp"
             android:text="Dmitri Mendeleev"
+            android:layout_marginBottom="8dp"
+            android:textSize="28sp"
             android:onClick="onRadioButtonClicked" />
         <RadioButton android:id="@+id/name_option_2"
-            android:textSize="20sp" 
             android:text="Jonas Salk"
+            android:layout_marginBottom="8dp"
+            android:textSize="28sp"
             android:onClick="onRadioButtonClicked"/>
         <RadioButton android:id="@+id/name_option_3"
-            android:textSize="20sp" 
             android:text="John Carmack"
+            android:layout_marginBottom="8dp"
+            android:textSize="28sp"
             android:onClick="onRadioButtonClicked"/>
         <RadioButton android:id="@+id/name_option_4"
-            android:textSize="20sp" 
+            android:textSize="28sp" 
             android:text="Robert De Niro"
+            android:layout_marginBottom="8dp"
             android:onClick="onRadioButtonClicked"/>
     </RadioGroup>
 
