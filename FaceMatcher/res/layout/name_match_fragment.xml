@@ -38,7 +38,6 @@
 
         <RadioButton android:id="@+id/name_option_1"
             android:text="Dmitri Mendeleev"
-            android:layout_marginBottom="8dp"
             android:textSize="28sp"
             android:onClick="onRadioButtonClicked" />
         <RadioButton android:id="@+id/name_option_2"
