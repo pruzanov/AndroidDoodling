@@ -8,21 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.TextView;
 
 public class FaceMatchFragment extends Fragment {
-	public static final int OPTIONS_COUNT = 4;
 	private static final int[] image_ids = {
-		                   R.id.face_thumbnail.1.1,R.id.face_thumbnail.1.2,
-		                   R.id.face_thumbnail.2.1,R.id.face_thumbnail.2.2};
+		                   R.id.face_thumbnail_1, R.id.face_thumbnail_2,
+		                   R.id.face_thumbnail_3,R.id.face_thumbnail_4};
 	OnFaceSelectedListener mCallback;
 	private Drawable[] faceThumbnails;
 	private String name;
 
 	public static FaceMatchFragment instanceOf(Drawable[] faces, String name) {
 		FaceMatchFragment fragment = new FaceMatchFragment();
-		fragment.setThumbnails(faces);
+		fragment.setFaceThumbnails(faces);
 		fragment.setName(name);
 
 		return fragment;
@@ -36,7 +34,7 @@ public class FaceMatchFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.name_match_fragment,
+		View rootView = inflater.inflate(R.layout.face_match_fragment,
 				container, false);
 
 		for (int i = 0; i < image_ids.length; i++) {
@@ -47,7 +45,7 @@ public class FaceMatchFragment extends Fragment {
 		
 		TextView p_name = (TextView) rootView
 		      .findViewById(R.id.person_name);
-		p.name.setText(this.faceThumbnail);	
+		p_name.setText(this.name);	
 
 		return rootView;
 	}
@@ -55,10 +53,10 @@ public class FaceMatchFragment extends Fragment {
 
 	// Mehods for initialization
 	public void setFaceThumbnails(Drawable[] faces) {
-		this.faceThumbnails = face;
+		this.faceThumbnails = faces;
 	}
 
-	public void setOptions(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -68,10 +66,10 @@ public class FaceMatchFragment extends Fragment {
 		// This makes sure that the container activity has implemented
 		// the callback interface. If not, it throws an exception
 		try {
-			mCallback = (OnNameSelectedListener) activity;
+			mCallback = (OnFaceSelectedListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
-					+ " must implement OnNameSelectedListener");
+					+ " must implement OnFaceSelectedListener");
 		}
 	}
 

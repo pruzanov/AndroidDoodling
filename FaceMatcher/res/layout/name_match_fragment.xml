@@ -15,7 +15,7 @@
          android:id="@+id/player_score"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:textSize="20sp"
+         android:textSize="25sp"
          android:textStyle="bold"
          android:text="@string/score_string"/>
     </LinearLayout>
@@ -23,9 +23,9 @@
     <ImageView
         android:id="@+id/face_thumbnail"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="60dp"
         android:contentDescription="@string/image_type"
         android:src="@drawable/deniro" />
 
@@ -33,26 +33,30 @@
         android:id="@+id/name_options"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="25dp"
         android:layout_weight="1" >
 
         <RadioButton android:id="@+id/name_option_1"
             android:text="Dmitri Mendeleev"
+            android:textStyle="bold"
             android:textSize="28sp"
             android:onClick="onRadioButtonClicked" />
         <RadioButton android:id="@+id/name_option_2"
             android:text="Jonas Salk"
+            android:textStyle="bold"
             android:layout_marginBottom="8dp"
             android:textSize="28sp"
             android:onClick="onRadioButtonClicked"/>
         <RadioButton android:id="@+id/name_option_3"
             android:text="John Carmack"
+            android:textStyle="bold"
             android:layout_marginBottom="8dp"
             android:textSize="28sp"
             android:onClick="onRadioButtonClicked"/>
         <RadioButton android:id="@+id/name_option_4"
             android:textSize="28sp" 
             android:text="Robert De Niro"
+            android:textStyle="bold"
             android:layout_marginBottom="8dp"
             android:onClick="onRadioButtonClicked"/>
     </RadioGroup>

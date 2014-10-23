@@ -3,6 +3,7 @@ package ca.on.oicr.pde.facematcher;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +18,8 @@ import ca.on.oicr.pde.facematcher.util.SystemUiHider;
  */
 public class FaceMatchActivity extends Activity implements
 		TopMenuFragment.OnOptionSelectedListener,
-		NameMatchFragment.OnNameSelectedListener {
+		NameMatchFragment.OnNameSelectedListener,
+		FaceMatchFragment.OnFaceSelectedListener {
 
 	protected static final String TAG = "FaceMatcher";
 	private FragmentManager mFragmentManager;
@@ -63,9 +65,13 @@ public class FaceMatchActivity extends Activity implements
 		mFragmentManager = getFragmentManager();
 		FragmentTransaction fragmentTransaction = mFragmentManager
 				.beginTransaction();
-		fragmentTransaction.add(R.id.ui_fragment_container,
+		fragmentTransaction.
+		        addToBackStack("TopMenu").
+		        add(R.id.ui_fragment_container,
 				new TopMenuFragment());
 		fragmentTransaction.commit();
+		
+		getActionBar().hide();
 
 		/*
 		 * String[] names =
@@ -117,6 +123,11 @@ public class FaceMatchActivity extends Activity implements
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see ca.on.oicr.pde.facematcher.TopMenuFragment.OnOptionSelectedListener#onOptionSelected(int)
+	 * Method for communicating with Top Menu Fragment
+	 */
 	@Override
 	public void onOptionSelected(int position) {
 		switch (position) {
@@ -157,6 +168,13 @@ public class FaceMatchActivity extends Activity implements
 			/*
 			 * DEBUGGING: building a dummy fragment with test data
 			 */
+			Drawable[] faces = {getResources().getDrawable(R.drawable.deniro), getResources().getDrawable(R.drawable.billgatesad),
+					            getResources().getDrawable(R.drawable.muhammadali), getResources().getDrawable(R.drawable.johncarmack)};
+			String name = "Robert De Niro";
+			FaceMatchFragment mockFragment2 = FaceMatchFragment.instanceOf(faces, name);
+			FragmentTransaction fragmentTransaction2 = getFragmentManager().beginTransaction();
+			fragmentTransaction2.replace(R.id.ui_fragment_container, mockFragment2);
+			fragmentTransaction2.commit();
 			break;
 		case TopMenuFragment.TIMED_MATCH:
 			// TODO launch game of third type:
@@ -166,41 +184,58 @@ public class FaceMatchActivity extends Activity implements
 		}
 		;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see ca.on.oicr.pde.facematcher.NameMatchFragment.OnNameSelectedListener#onNameSelected(int)
+	 * Method for interaction with Name Matching Fragment
+	 */
 
 	@Override
 	public void onNameSelected(int option) {
 		// TODO implement name-processing code
-
+		Log.d(TAG, "Would handle name selection in Name Matching Game");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see ca.on.oicr.pde.facematcher.FaceMatchFragment.OnFaceSelectedListener#onFaceSelected(int)
+	 * Method for interaction with Face Matching Fragment
+	 */
+	@Override
+	public void onFaceSelected(int option) {
+		// TODO Auto-generated method stub
+		Log.d(TAG, "Would handle face selection in Face Matching Game");
+	}
+	
 	public void onRadioButtonClicked(View v) {
 		// Is the button now checked?
 		Log.d(TAG, "Radio button clicked in FaceMatchActivity!");
 		boolean checked = ((RadioButton) v).isChecked();
-		int option = 0;
+		//int option = 0;
 		// Check which radio button was clicked
 		switch (v.getId()) {
 		case R.id.name_option_1:
 			if (checked)
-				option = 1;
+			//	option = 1;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 1");
 			// Option 1 is clicked
 			break;
 		case R.id.name_option_2:
 			if (checked)
-				option = 2;
+			//	option = 2;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 2");
 			// Option 2 is clicked
 			break;
 		case R.id.name_option_3:
 			if (checked)
-				option = 3;
+			//	option = 3;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 3");
 			// Option 3 is clicked
 			break;
 		case R.id.name_option_4:
 			if (checked)
-				option = 4;
+			//	option = 4;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 4");
 			// Option 4 is clicked
 			break;
@@ -215,6 +250,8 @@ public class FaceMatchActivity extends Activity implements
 	 * created, to briefly hint to the user that UI controls // are available.
 	 * delayedHide(100); }
 	 */
+
+	
 
 	/**
 	 * Touch listener to use for in-layout UI controls to delay hiding the
