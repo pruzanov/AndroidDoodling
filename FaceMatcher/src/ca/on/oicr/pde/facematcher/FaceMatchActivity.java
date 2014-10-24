@@ -73,7 +73,8 @@ public class FaceMatchActivity extends Activity implements
 		fragmentTransaction.commit();
 		
 		getActionBar().hide();
-
+        int deniroID = getResources().getIdentifier("deniro", "drawable", this.getPackageName());
+        int peopleJsonID = getResources().getIdentifier("people", "raw", this.getPackageName());
 		
 		new DataLoaderTask(this).execute();
 		// final View controlsView =
@@ -157,6 +158,7 @@ public class FaceMatchActivity extends Activity implements
 			mFragmentManager = getFragmentManager();
 			FragmentTransaction fragmentTransaction = mFragmentManager .beginTransaction();	
 			fragmentTransaction.replace(R.id.ui_fragment_container, mockFragment);
+			fragmentTransaction.addToBackStack("TopMenu");
 			fragmentTransaction.commit();
 			/*
 			 * DEBUGGING ENDS
@@ -174,6 +176,7 @@ public class FaceMatchActivity extends Activity implements
 			FaceMatchFragment mockFragment2 = FaceMatchFragment.instanceOf(faces, name);
 			FragmentTransaction fragmentTransaction2 = getFragmentManager().beginTransaction();
 			fragmentTransaction2.replace(R.id.ui_fragment_container, mockFragment2);
+			fragmentTransaction2.addToBackStack("TopMenu");
 			fragmentTransaction2.commit();
 			break;
 		case TopMenuFragment.TIMED_MATCH:

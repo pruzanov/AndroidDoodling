@@ -48,26 +48,25 @@ public class DataLoaderTask extends AsyncTask<Void, Void, OicrPerson[]> {
 		}
 	}
 
-	private OicrPerson[] getDataFromFile(Void... params) 
-			throws IOException {
+	private OicrPerson[] getDataFromFile(Void... params) throws IOException {
 
-		Resources res = mParent.get().getResources(); 
+		Resources res = mParent.get().getResources();
 
-		String jsonLine = ""; 
-		String jString = ""; 
+		String jsonLine = "";
+		String jString = "";
 
-		Log.d(FaceMatchActivity.TAG, "Will Load the data from static people.json"); 
-		InputStream fis = res.openRawResource(R.raw.people); 
+		Log.d(FaceMatchActivity.TAG,
+				"Will Load the data from static people.json");
+		InputStream fis = res.openRawResource(R.raw.people);
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
-		while (null != (jsonLine = br.readLine())) { 
-			jString = jString.concat(jsonLine); 
-		} 
-		br.close(); 
-		OicrPerson[] results = getRecordsFromJSON(jString, "people");	
+		while (null != (jsonLine = br.readLine())) {
+			jString = jString.concat(jsonLine);
+		}
+		br.close();
+		OicrPerson[] results = getRecordsFromJSON(jString, "people");
 		return results;
-    }
-	 
+	}
 
 	public OicrPerson[] getRecordsFromJSON(String JsonString, String type) {
 		List<OicrPerson> dataAsList = new ArrayList<OicrPerson>();
@@ -78,20 +77,32 @@ public class DataLoaderTask extends AsyncTask<Void, Void, OicrPerson[]> {
 			for (int i = 0; i < People.length(); i++) {
 				JSONObject tmp = (JSONObject) People.get(i);
 				OicrPerson newPerson = new OicrPerson();
-				newPerson.name = tmp.getString("name");
-				newPerson.imageURL = tmp.getString("png");
-				dataAsList.add(newPerson);
+				newPerson.setName(tmp.getString("name"));
+				newPerson.setImageURL(tmp.getString("png"));
+				try {
+					newPerson.imageURL = newPerson.imageURL.substring(0,
+							newPerson.imageURL.lastIndexOf(".png"));
+					newPerson.setImageID(this.mParent
+							.get()
+							.getResources()
+							.getIdentifier(newPerson.imageURL, "drawable", // drawable for debugging, raw for real data
+									this.mParent.get().getPackageName()));
+					if (newPerson.isValid())
+						dataAsList.add(newPerson);
+				} catch (NullPointerException npe) {
+					Log.e(FaceMatchActivity.TAG,"Invalid Record in data table");
+				}
 			}
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
-		OicrPerson[] results = new OicrPerson[dataAsList.size()]; 
+
+		OicrPerson[] results = new OicrPerson[dataAsList.size()];
 		for (int o = 0; o < dataAsList.size(); o++) {
 			results[o] = dataAsList.get(o);
 		}
-		return results; 
+		return results;
 	}
 
 }

@@ -10,7 +10,7 @@ import java.util.Random;
  */
 
 public class MatchGame {
-
+    // Only valid entries get into gameData
 	private OicrPerson[] gameData;
 	private Integer[] randomizedIndexes;
 	private int cursor;
