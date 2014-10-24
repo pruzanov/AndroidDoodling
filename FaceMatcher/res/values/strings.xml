@@ -13,5 +13,6 @@
     <string name="score_string">Score:</string>
     <string name="timer_string">00:00</string>
     <string name="sample_name_string">Robert De Niro</string>
+    <string name="pick_challenge">pick your challenge...</string>
 
 </resources>

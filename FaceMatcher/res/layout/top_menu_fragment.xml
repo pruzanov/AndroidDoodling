@@ -1,75 +1,111 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fullscreen_content_controls"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical|center_horizontal"
-    android:orientation="vertical">
-    
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
     <LinearLayout
-    android:id="@+id/service_controls"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="top|fill_horizontal"
-    android:orientation="horizontal">
-    
-    <Button
-        android:id="@+id/button_show_about"
-        style="?android:attr/buttonBarButtonStyle"
+        android:id="@+id/service_controls"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="40dp"
-        android:layout_weight="1"
-        android:background="#0055cc"
-        android:text="@string/show_about_button" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|fill_horizontal"
+        android:orientation="horizontal" >
 
-    <Button
-        android:id="@+id/button_settings"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_weight="1"
-        android:background="#0055cc"
-        android:text="@string/settings_button" />
+        <ImageButton
+            android:id="@+id/button_show_about"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="top"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/image_type"
+            android:src="@drawable/ic_menu_aboot" />
 
-    <Button
-        android:id="@+id/button_show_leaderboard"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginLeft="10dp"
-        android:layout_weight="1"
-        android:background="#0055cc"
-        android:text="@string/show_leaderboard_button" />
-    
+        <ImageButton
+            android:id="@+id/button_settings"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="top"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/image_type"
+            android:src="@drawable/ic_menu_settings" />
+
+        <ImageButton
+            android:id="@+id/button_show_leaderboard"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="top"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/image_type"
+            android:src="@drawable/ic_menu_award" />
     </LinearLayout>
-    
-    <Button
-        android:id="@+id/button_matchname"
-        style="?metaButtonBarButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginBottom="40dp"
-        android:background="#0055cc"
-        android:text="@string/matchname_button" />
 
-    <Button
-        android:id="@+id/button_matchface"
-        style="?metaButtonBarButtonStyle"
+        <ImageView
+            android:id="@+id/game_banner"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="0.8"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/image_type"
+            android:src="@drawable/logo_app" />
+        
+    <LinearLayout
+        android:id="@+id/game_buttons"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginBottom="40dp"
-        android:background="#0055cc"
-        android:text="@string/matchface_button" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:orientation="vertical" >
+        
+        <TextView
+            android:id="@+id/pick_your_challenge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:text="@string/pick_challenge"
+            android:textColor="#a3bfa3"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/button_timedgame"
-        style="?metaButtonBarButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="#0055cc"
-        android:text="@string/timedgame_button" />
+        <ImageButton
+            android:id="@+id/button_matchname"
+            style="?metaButtonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:contentDescription="@string/image_type"
+            android:src="@drawable/banner_game01" />
+
+        <ImageButton
+            android:id="@+id/button_matchface"
+            style="?metaButtonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:contentDescription="@string/image_type"
+            android:src="@drawable/banner_game02" />
+
+        <ImageButton
+            android:id="@+id/button_timedgame"
+            style="?metaButtonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="120dp"
+            android:contentDescription="@string/image_type"
+            android:src="@drawable/banner_game03" />
+        
+    </LinearLayout>
 
 </LinearLayout>

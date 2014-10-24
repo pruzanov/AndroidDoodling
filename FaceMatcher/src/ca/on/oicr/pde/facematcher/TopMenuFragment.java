@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 public class TopMenuFragment extends Fragment {
 	public static final int SHOW_ABOUT = 1;
@@ -31,7 +31,7 @@ public class TopMenuFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.top_menu_fragment, container,
 				false);
 
-		Button selectAboutButton = (Button) rootView
+		ImageButton selectAboutButton = (ImageButton) rootView
 				.findViewById(R.id.button_show_about);
 		selectAboutButton.setOnClickListener(new OnClickListener() {
 
@@ -44,7 +44,7 @@ public class TopMenuFragment extends Fragment {
 			}
 		});
 
-		Button selectSettingsButton = (Button) rootView
+		ImageButton selectSettingsButton = (ImageButton) rootView
 				.findViewById(R.id.button_settings);
 		selectSettingsButton.setOnClickListener(new OnClickListener() {
 
@@ -57,7 +57,7 @@ public class TopMenuFragment extends Fragment {
 			}
 		});
 
-		Button selectLeaderBoardButton = (Button) rootView
+		ImageButton selectLeaderBoardButton = (ImageButton) rootView
 				.findViewById(R.id.button_show_leaderboard);
 		selectLeaderBoardButton.setOnClickListener(new OnClickListener() {
 
@@ -70,7 +70,7 @@ public class TopMenuFragment extends Fragment {
 			}
 		});
 
-		Button nameMatchButton = (Button) rootView
+		ImageButton nameMatchButton = (ImageButton) rootView
 				.findViewById(R.id.button_matchname);
 		nameMatchButton.setOnClickListener(new OnClickListener() {
 
@@ -83,7 +83,7 @@ public class TopMenuFragment extends Fragment {
 			}
 		});
 
-		Button faceMatchButton = (Button) rootView
+		ImageButton faceMatchButton = (ImageButton) rootView
 				.findViewById(R.id.button_matchface);
 		faceMatchButton.setOnClickListener(new OnClickListener() {
 
@@ -96,7 +96,7 @@ public class TopMenuFragment extends Fragment {
 			}
 		});
 
-		Button timedMatchButton = (Button) rootView
+		ImageButton timedMatchButton = (ImageButton) rootView
 				.findViewById(R.id.button_timedgame);
 		timedMatchButton.setOnClickListener(new OnClickListener() {
 

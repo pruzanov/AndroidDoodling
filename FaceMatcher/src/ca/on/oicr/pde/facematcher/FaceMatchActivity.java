@@ -20,7 +20,7 @@ public class FaceMatchActivity extends Activity implements
 		TopMenuFragment.OnOptionSelectedListener,
 		NameMatchFragment.OnNameSelectedListener,
 		FaceMatchFragment.OnFaceSelectedListener {
-	public static final int OPTIONS_COUNT = 4;
+	protected static final int OPTIONS_COUNT = 4;
 	protected static final String TAG = "FaceMatcher";
 	private FragmentManager mFragmentManager;
 	private MatchGame mGame;
