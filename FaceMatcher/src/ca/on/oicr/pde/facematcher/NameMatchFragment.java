@@ -12,7 +12,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 public class NameMatchFragment extends Fragment {
-	public static final int OPTIONS_COUNT = 4;
 	OnNameSelectedListener mCallback;
 	private Drawable faceThumbnail;
 	private String[] names;
@@ -39,7 +38,7 @@ public class NameMatchFragment extends Fragment {
 				.findViewById(R.id.face_thumbnail);
 		thumb.setImageDrawable(this.faceThumbnail);
 		RadioGroup rg = (RadioGroup) rootView.findViewById(R.id.name_options);
-		for (int i = 0; i < OPTIONS_COUNT; i++) {
+		for (int i = 0; i < FaceMatchActivity.OPTIONS_COUNT; i++) {
 			RadioButton rb = (RadioButton) rg.getChildAt(i);
 			rb.setText(this.names[i]);
 		}

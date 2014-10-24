@@ -20,9 +20,10 @@ public class FaceMatchActivity extends Activity implements
 		TopMenuFragment.OnOptionSelectedListener,
 		NameMatchFragment.OnNameSelectedListener,
 		FaceMatchFragment.OnFaceSelectedListener {
-
+	public static final int OPTIONS_COUNT = 4;
 	protected static final String TAG = "FaceMatcher";
 	private FragmentManager mFragmentManager;
+	private MatchGame mGame;
 
 	/**
 	 * Whether or not the system UI should be auto-hidden after
@@ -73,18 +74,8 @@ public class FaceMatchActivity extends Activity implements
 		
 		getActionBar().hide();
 
-		/*
-		 * String[] names =
-		 * {"Che Gevara","Robert De Niro","Pope Francis","Bill Gates"};
-		 * NameMatchFragment mockFragment = NameMatchFragment.instanceOf(
-		 * getResources().getDrawable(R.drawable.deniro), names);
-		 * 
-		 * mFragmentManager = getFragmentManager(); FragmentTransaction
-		 * fragmentTransaction = mFragmentManager .beginTransaction();
-		 * fragmentTransaction.add(R.id.ui_fragment_container, mockFragment);
-		 * fragmentTransaction.commit();
-		 */
-
+		
+		new DataLoaderTask(this).execute();
 		// final View controlsView =
 		// findViewById(R.id.fullscreen_content_controls);
 		// final View contentView = findViewById(R.id.fullscreen_content);
@@ -121,6 +112,15 @@ public class FaceMatchActivity extends Activity implements
 		// findViewById(R.id.dummy_button1).setOnTouchListener(
 		// mDelayHideTouchListener);
 
+	}
+	
+	protected void addGameData(OicrPerson[] data) {
+	   this.mGame = new MatchGame(data);
+	   try {
+	     Thread.sleep(300);
+	   } catch (InterruptedException IE) {
+		 Log.e(TAG, "Data producing thread was interrupted");  
+	   }
 	}
 
 	/*
@@ -195,6 +195,8 @@ public class FaceMatchActivity extends Activity implements
 	public void onNameSelected(int option) {
 		// TODO implement name-processing code
 		Log.d(TAG, "Would handle name selection in Name Matching Game");
+		// this.mMatchGame.setup(NAME_MATCH, TRIES);
+		// 
 	}
 
 	/*
