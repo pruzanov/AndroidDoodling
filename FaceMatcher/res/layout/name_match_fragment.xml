@@ -2,7 +2,6 @@
     android:id="@+id/name_match_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_vertical|center_horizontal"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -26,35 +25,41 @@
         android:layout_height="220dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="60dp"
+        android:layout_gravity="center_vertical|center_horizontal"
         android:contentDescription="@string/image_type"
         android:src="@drawable/deniro" />
 
     <RadioGroup
         android:id="@+id/name_options"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginLeft="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_gravity="center_vertical|center_horizontal"
         android:layout_weight="1" >
 
         <RadioButton android:id="@+id/name_option_1"
             android:text="Dmitri Mendeleev"
             android:textStyle="bold"
-            android:textSize="28sp"
+            android:textSize="30sp"
+            android:layout_gravity="center_vertical"
             android:onClick="onRadioButtonClicked" />
         <RadioButton android:id="@+id/name_option_2"
             android:text="Jonas Salk"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"
-            android:textSize="28sp"
+            android:textSize="30sp"
+            android:layout_gravity="center_vertical"
             android:onClick="onRadioButtonClicked"/>
         <RadioButton android:id="@+id/name_option_3"
             android:text="John Carmack"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"
-            android:textSize="28sp"
+            android:textSize="30sp"
+            android:layout_gravity="center_vertical"
             android:onClick="onRadioButtonClicked"/>
         <RadioButton android:id="@+id/name_option_4"
-            android:textSize="28sp" 
+            android:textSize="30sp"
+            android:layout_gravity="center_vertical"
             android:text="Robert De Niro"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"
