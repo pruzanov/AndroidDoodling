@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_horizontal"
-    android:orientation="vertical">
-  
+    android:orientation="vertical" >
+
     <LinearLayout
         android:id="@+id/game_feedbacks"
         android:layout_width="match_parent"
@@ -22,17 +22,27 @@
             android:textSize="25sp"
             android:textStyle="bold" />
 
-        <TextView 
-         android:id="@+id/player_time"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:gravity="end"
-         android:textSize="25sp"
-         android:textStyle="bold"
-         android:visibility="visible"
-         android:text="@string/timer_string"/>
+        <TextView
+            android:id="@+id/player_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="@string/timer_string"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
     </LinearLayout>
-    
+
+    <ImageView
+        android:id="@+id/banner_face_match"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:contentDescription="@string/image_type"
+        android:background="#FF99CC"
+        android:src="@drawable/banner_game02" />
+
     <LinearLayout
         android:id="@+id/face_thumb_row1"
         android:layout_width="match_parent"
@@ -45,8 +55,7 @@
             android:id="@+id/face_thumbnail_1"
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
             android:layout_weight="1"
             android:contentDescription="@string/image_type"
             android:scaleType="fitCenter"
@@ -56,49 +65,52 @@
             android:id="@+id/face_thumbnail_2"
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
             android:layout_weight="1"
             android:contentDescription="@string/image_type"
             android:scaleType="fitCenter"
             android:src="@drawable/billgatesad" />
+    </LinearLayout>
 
-   </LinearLayout>
-   <LinearLayout
+    <LinearLayout
         android:id="@+id/face_thumb_row2"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_gravity="top|fill_horizontal"
         android:measureWithLargestChild="true"
         android:orientation="horizontal" >
+
         <ImageView
-        android:id="@+id/face_thumbnail_3"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_weight="1"
-        android:contentDescription="@string/image_type"
-        android:scaleType="fitCenter"
-        android:src="@drawable/muhammadali" />
+            android:id="@+id/face_thumbnail_3"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/image_type"
+            android:scaleType="fitCenter"
+            android:src="@drawable/muhammadali" />
+
         <ImageView
-        android:id="@+id/face_thumbnail_4"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_weight="1"
-        android:contentDescription="@string/image_type"
-        android:scaleType="fitCenter"
-        android:src="@drawable/johncarmack" />
-   </LinearLayout>
-   <TextView 
-         android:id="@+id/person_name"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_marginTop="30dp"
-         android:layout_gravity="center_horizontal"
-         android:textSize="26sp"
-         android:textStyle="bold"
-         android:text="@string/sample_name_string"/>
+            android:id="@+id/face_thumbnail_4"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/image_type"
+            android:scaleType="fitCenter"
+            android:src="@drawable/johncarmack" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/person_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:text="@string/sample_name_string"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
 </LinearLayout>

@@ -79,32 +79,35 @@
         <ImageButton
             android:id="@+id/button_matchname"
             style="?metaButtonBarButtonStyle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="20dp"
             android:contentDescription="@string/image_type"
-            android:src="@drawable/banner_game01" />
+            android:src="@drawable/btn_game01"
+            android:background="@android:color/transparent" />
 
         <ImageButton
             android:id="@+id/button_matchface"
             style="?metaButtonBarButtonStyle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="20dp"
             android:contentDescription="@string/image_type"
-            android:src="@drawable/banner_game02" />
+            android:src="@drawable/btn_game02"
+            android:background="@android:color/transparent" />
 
         <ImageButton
             android:id="@+id/button_timedgame"
             style="?metaButtonBarButtonStyle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="120dp"
             android:contentDescription="@string/image_type"
-            android:src="@drawable/banner_game03" />
+            android:src="@drawable/btn_game03"
+            android:background="@android:color/transparent" />
         
     </LinearLayout>
 

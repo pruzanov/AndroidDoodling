@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,6 +72,11 @@ public class FaceMatchFragment extends Fragment {
 			throw new ClassCastException(activity.toString()
 					+ " must implement OnFaceSelectedListener");
 		}
+	}
+	
+	public void showAnswers() {
+		//TODO show correct (and user's answer if it is incorrect)
+		Log.d(FaceMatchActivity.TAG,"Would have shown the answers");
 	}
 
 }

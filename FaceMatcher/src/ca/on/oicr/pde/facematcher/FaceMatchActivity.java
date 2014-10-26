@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
@@ -20,10 +21,18 @@ public class FaceMatchActivity extends Activity implements
 		TopMenuFragment.OnOptionSelectedListener,
 		NameMatchFragment.OnNameSelectedListener,
 		FaceMatchFragment.OnFaceSelectedListener {
+	
+    // Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
+	protected static final int QUIZES_COUNT  = 10;
 	protected static final String TAG = "FaceMatcher";
+	// Supported Game types:
+	private static final int NAME_MATCH_GAME = 1;
+	private static final int FACE_MATCH_GAME = 2;
+	private static final int FACE_MATCH_TIMED_GAME = 3;
 	private FragmentManager mFragmentManager;
 	private MatchGame mGame;
+	private boolean gameInProgress;
 
 	/**
 	 * Whether or not the system UI should be auto-hidden after
@@ -56,7 +65,7 @@ public class FaceMatchActivity extends Activity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		gameInProgress = false;
 		Log.i(TAG, getClass().getSimpleName() + ":entered onCreate()");
 
 		super.onCreate(savedInstanceState);
@@ -67,14 +76,13 @@ public class FaceMatchActivity extends Activity implements
 		FragmentTransaction fragmentTransaction = mFragmentManager
 				.beginTransaction();
 		fragmentTransaction.
-		        addToBackStack("TopMenu").
+		        //addToBackStack("TopMenu").
 		        add(R.id.ui_fragment_container,
 				new TopMenuFragment());
 		fragmentTransaction.commit();
 		
 		getActionBar().hide();
         int deniroID = getResources().getIdentifier("deniro", "drawable", this.getPackageName());
-        int peopleJsonID = getResources().getIdentifier("people", "raw", this.getPackageName());
 		
 		new DataLoaderTask(this).execute();
 		// final View controlsView =
@@ -113,6 +121,22 @@ public class FaceMatchActivity extends Activity implements
 		// findViewById(R.id.dummy_button1).setOnTouchListener(
 		// mDelayHideTouchListener);
 
+	}
+	
+	@Override
+	public void onBackPressed() {
+		// TODO Add a dialog asking user to confirm exit to the top menu
+		if (this.gameInProgress) {
+			
+			FragmentTransaction fragmentTransaction = getFragmentManager()
+					                                  .beginTransaction();
+			fragmentTransaction.replace(R.id.ui_fragment_container,
+					                    new TopMenuFragment());
+			fragmentTransaction.commit();
+			this.gameInProgress = false;
+		} else {
+			super.onBackPressed();
+		}
 	}
 	
 	protected void addGameData(OicrPerson[] data) {
@@ -157,9 +181,10 @@ public class FaceMatchActivity extends Activity implements
 			NameMatchFragment mockFragment = NameMatchFragment.instanceOf(getResources().getDrawable(R.drawable.deniro), names);
 			mFragmentManager = getFragmentManager();
 			FragmentTransaction fragmentTransaction = mFragmentManager .beginTransaction();	
-			fragmentTransaction.replace(R.id.ui_fragment_container, mockFragment);
+			fragmentTransaction.replace(R.id.ui_fragment_container, mockFragment,"current");
 			fragmentTransaction.addToBackStack("TopMenu");
 			fragmentTransaction.commit();
+			this.gameInProgress = true;
 			/*
 			 * DEBUGGING ENDS
 			 */
@@ -230,6 +255,22 @@ public class FaceMatchActivity extends Activity implements
 			if (checked)
 			//	option = 2;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 2");
+			//
+			String[] names = {"Phil Collins","Bruce Lee","Muhammad Ali","Bill Clinton"};
+			final NameMatchFragment mockFragment = NameMatchFragment.instanceOf(getResources().getDrawable(R.drawable.muhammadali), names);
+			mFragmentManager = getFragmentManager();
+			NameMatchFragment nf = (NameMatchFragment) mFragmentManager.findFragmentByTag("current");
+			nf.showAnswers();
+			final FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+			Handler fragSwapper = new Handler();
+			fragSwapper.postDelayed(new Runnable(){
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						fragmentTransaction.replace(R.id.ui_fragment_container, mockFragment);
+				        fragmentTransaction.commit();
+					}}, 1000L);
 			// Option 2 is clicked
 			break;
 		case R.id.name_option_3:
@@ -256,8 +297,31 @@ public class FaceMatchActivity extends Activity implements
 	 * delayedHide(100); }
 	 */
 
+	private void startGame (int type) {
+		if (null == this.mGame) {
+		    Log.e(TAG,"Game was not setup properly, won't start");
+			return;
+		}
+		
+		this.gameInProgress = true;
+		MatchGame.GameSet firstSet = this.mGame.getNextGameSet();
+		// TODO create and show proper fragment, start timer task and set score to initial value
+	}
 	
+	private void updateGame() {
+		// TODO get next GameSet, create proper fragment, reveal answers for current quiz
+		// if game is up, finish game
+	}
 
+	private void finishGame() {
+		// TODO
+		this.gameInProgress = false;
+		// update score, show dialog and help reset to top menu
+	}
+	
+	private void constructAndShowNext (MatchGame.GameSet set) {
+		// TODO construct proper fragment and replace current one with the new one
+	}
 	/**
 	 * Touch listener to use for in-layout UI controls to delay hiding the
 	 * system UI. This is to prevent the jarring behaviour of controls going

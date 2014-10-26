@@ -4,64 +4,78 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
-
 /*
  * Class to be used by activity for making game fragments
  */
 
 public class MatchGame {
-    // Only valid entries get into gameData
+	// Only valid entries get into gameData
 	private OicrPerson[] gameData;
 	private Integer[] randomizedIndexes;
 	private int cursor;
-	private Random r;
-	
-	
-	public MatchGame(OicrPerson [] data) {
+	private int counter;
+
+	public MatchGame(OicrPerson[] data) {
 		this.gameData = data;
-		this.cursor = 0;
-		this.r = new Random();
-		this.randomizedIndexes = randomizeIndexes(this.gameData.length);
+		this.setup();
 	}
-	
+
 	/*
-	 * Load data and generate randomized array of indexes 
+	 * Load data and generate randomized array of indexes
 	 */
 	public void setup() {
-		
-		this.randomizedIndexes = new Integer[this.gameData.length];
-		for (int i = 0; i < this.randomizedIndexes.length; i++) {
-			this.randomizedIndexes[i] = i;
-		}	
-		Collections.shuffle(Arrays.asList(this.randomizedIndexes), this.r);
+		this.randomizedIndexes = randomizeIndexes(this.gameData.length);
+		this.cursor = 0;
+		this.counter = 0;
 	}
-	
-	
-	public OicrPerson [] getNextSet (int size) {
-		return null;
-	}
-	
+
 	public GameSet getNextGameSet() {
-		return null;
+		this.counter++;
+		return new GameSet();
 	}
-	
-	private Integer[] randomizeIndexes(int length) {
-		return null;
+
+	public int getCounter() {
+		return counter;
 	}
-	
+
 	/*
-	 * A set of N entries for setting up one fragment
+	 * Static function for randomizing indexes in N element array
+	 * returns randomized array of indexes
+	 */
+	private static Integer[] randomizeIndexes(int length) {
+		Integer[] randomized = new Integer[length];
+		Random r = new Random();
+		for (int i = 0; i < randomized.length; i++) {
+			randomized[i] = i;
+		}
+		Collections.shuffle(Arrays.asList(randomized), r);
+		return randomized;
+	}
+
+	/*
+	 * A set of FaceMatchActivity.OPTIONS_COUNT entries for setting up one fragment
 	 */
 	class GameSet {
-		String [] peopleNames;
-		String [] URLs;
-		int indexMe;
-		
+		String[] peopleNames;
+		String[] URLs;
+		int indexMe; // index of the Right answer
+
 		GameSet() {
+			Random r = new Random();
 			this.peopleNames = new String[FaceMatchActivity.OPTIONS_COUNT];
-			this.URLs        = new String[FaceMatchActivity.OPTIONS_COUNT];
+			this.URLs = new String[FaceMatchActivity.OPTIONS_COUNT];
 			this.indexMe = r.nextInt(FaceMatchActivity.OPTIONS_COUNT);
-			//TODO add actual data
+			if (MatchGame.this.cursor + FaceMatchActivity.OPTIONS_COUNT > MatchGame.this.randomizedIndexes.length)
+				MatchGame.this.setup();
+
+			for (int c = MatchGame.this.cursor; c < MatchGame.this.cursor
+					+ FaceMatchActivity.OPTIONS_COUNT - 1; c++) {
+				this.peopleNames[c] = gameData[MatchGame.this.randomizedIndexes[c]]
+						.getName();
+				this.URLs[c] = gameData[MatchGame.this.randomizedIndexes[c]]
+						.getImageURL();
+			}
+			MatchGame.this.cursor += FaceMatchActivity.OPTIONS_COUNT;
 		}
-	}	
+	}
 }
