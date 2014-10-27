@@ -174,20 +174,7 @@ public class FaceMatchActivity extends Activity implements
 			// TODO launch game of first type
 			Log.d(TAG, "Would have switched to NameMatching Game");
 			// mFragmentManager = getFragmentManager();
-			/*
-			 * DEBUGGING: building a dummy fragment with test data
-			 */
-			String[] names = {"Che Gevara","Robert De Niro","Pope Francis","Bill Gates"};
-			NameMatchFragment mockFragment = NameMatchFragment.instanceOf(getResources().getDrawable(R.drawable.deniro), names);
-			mFragmentManager = getFragmentManager();
-			FragmentTransaction fragmentTransaction = mFragmentManager .beginTransaction();	
-			fragmentTransaction.replace(R.id.ui_fragment_container, mockFragment,"current");
-			fragmentTransaction.addToBackStack("TopMenu");
-			fragmentTransaction.commit();
-			this.gameInProgress = true;
-			/*
-			 * DEBUGGING ENDS
-			 */
+			
 			break;
 		case TopMenuFragment.FACE_MATCH:
 			// TODO launch game of second type
@@ -207,6 +194,21 @@ public class FaceMatchActivity extends Activity implements
 		case TopMenuFragment.TIMED_MATCH:
 			// TODO launch game of third type:
 			Log.d(TAG, "Would have switched to TimedMatching Game");
+			/*
+			 * DEBUGGING: building a dummy fragment with test data
+			 */
+			String[] names = {"Che Gevara","Robert De Niro","Pope Francis","Bill Gates"};
+			NameMatchFragment mockFragment = NameMatchFragment.instanceOf(getResources().getDrawable(R.drawable.deniro), names);
+			mFragmentManager = getFragmentManager();
+			FragmentTransaction fragmentTransaction = mFragmentManager .beginTransaction();	
+			fragmentTransaction.replace(R.id.ui_fragment_container, mockFragment,"current");
+			fragmentTransaction.addToBackStack("TopMenu");
+			fragmentTransaction.commit();
+			this.gameInProgress = true;
+			/*
+			 * DEBUGGING ENDS
+			 */
+			break;
 		default:
 			break;
 		}
@@ -250,6 +252,8 @@ public class FaceMatchActivity extends Activity implements
 			//	option = 1;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 1");
 			// Option 1 is clicked
+			// check game counter, if it's over, finish
+			// produce and show the nest fragment
 			break;
 		case R.id.name_option_2:
 			if (checked)
