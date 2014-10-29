@@ -6,7 +6,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,6 +44,15 @@ public class FaceMatchFragment extends Fragment {
 		  ImageView thumb = (ImageView) rootView
 				  .findViewById(image_ids[i]);
 		  thumb.setImageDrawable(this.faceThumbnails[i]);
+		  thumb.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				mCallback.onFaceSelected(v.getId());
+				return v.performClick();
+			}
+		});
 		}
 		
 		TextView p_name = (TextView) rootView

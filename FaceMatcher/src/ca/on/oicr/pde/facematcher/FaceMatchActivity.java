@@ -237,7 +237,7 @@ public class FaceMatchActivity extends Activity implements
 	@Override
 	public void onFaceSelected(int option) {
 		// TODO Auto-generated method stub
-		Log.d(TAG, "Would handle face selection in Face Matching Game");
+		Log.d(TAG, "Would handle face selection for Option " + option + " in Face Matching Game");
 	}
 	
 	public void onRadioButtonClicked(View v) {
@@ -268,12 +268,13 @@ public class FaceMatchActivity extends Activity implements
 			final FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
 			Handler fragSwapper = new Handler();
 			fragSwapper.postDelayed(new Runnable(){
-
+				//TODO use this code for swapping fragments in a generic way
 					@Override
 					public void run() {
-						// TODO Auto-generated method stub
+						fragmentTransaction.setCustomAnimations(R.animator.fade_in, 
+								                                R.animator.fade_out);
 						fragmentTransaction.replace(R.id.ui_fragment_container, mockFragment);
-				        fragmentTransaction.commit();
+						fragmentTransaction.commit();
 					}}, 1000L);
 			// Option 2 is clicked
 			break;
