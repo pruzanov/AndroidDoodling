@@ -70,7 +70,7 @@ public class NameMatchFragment extends Fragment {
 		}
 	}
 	
-	public void showAnswers() {
+	public void showAnswers(int answer) {
 		//TODO show correct (and user's answer if it is incorrect)
 		Log.d(FaceMatchActivity.TAG,"Would have shown the answers");
 	}

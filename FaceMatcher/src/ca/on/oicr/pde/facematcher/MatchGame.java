@@ -69,7 +69,7 @@ public class MatchGame {
 				MatchGame.this.setup();
 
 			for (int c = MatchGame.this.cursor; c < MatchGame.this.cursor
-					+ FaceMatchActivity.OPTIONS_COUNT - 1; c++) {
+					+ FaceMatchActivity.OPTIONS_COUNT; c++) {
 				this.peopleNames[c] = gameData[MatchGame.this.randomizedIndexes[c]]
 						.getName();
 				this.URLs[c] = gameData[MatchGame.this.randomizedIndexes[c]]
