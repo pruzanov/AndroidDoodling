@@ -20,7 +20,7 @@ import ca.on.oicr.pde.facematcher.util.SystemUiHider;
 public class FaceMatchActivity extends Activity
 		implements
 		TopMenuFragment.OnOptionSelectedListener,
-		MatchGameFragment.OnChoiceSelectedListener {
+		MatchGameFragment.OnAnswerSelectedListener {
 
 	// Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
@@ -173,9 +173,8 @@ public class FaceMatchActivity extends Activity
 			Log.d(TAG, "Would Have Open Settings Dialog");
 			break;
 		case TopMenuFragment.SHOW_LEADERS:
-			// TODO launch game of third type:
-			Log.d(TAG,
-					"Would Have Switched to LeaderBoard Fragment, if possible");
+			// TODO launch Leaderboard viewing activity:
+			Log.d(TAG, "Would Show LeaderBoard, if possible");
 			break;
 		case TopMenuFragment.NAME_MATCH:
 			Log.d(TAG, "Starting NameMatching Game");
@@ -183,48 +182,14 @@ public class FaceMatchActivity extends Activity
 			this.startGame(this.gameInProgress);
 			break;
 		case TopMenuFragment.FACE_MATCH:
-			// TODO launch game of second type
-			Log.d(TAG, "Would have switched to FaceMatching Game");
-			/*
-			 * DEBUGGING: building a dummy fragment with test data
-			 */
-			Drawable[] faces = { getResources().getDrawable(R.drawable.deniro),
-					getResources().getDrawable(R.drawable.billgatesad),
-					getResources().getDrawable(R.drawable.muhammadali),
-					getResources().getDrawable(R.drawable.johncarmack) };
-			String name = "Robert De Niro";
-			MatchGameFragment mockFragment2 = MatchGameFragment.instanceOf(
-					faces, name, false);
-			FragmentTransaction fragmentTransaction2 = getFragmentManager()
-					.beginTransaction();
-			fragmentTransaction2.replace(R.id.ui_fragment_container,
-					mockFragment2);
-			fragmentTransaction2.commit();
+			Log.d(TAG, "Starting FaceMatching Game");
 			this.gameInProgress = FACE_MATCH_GAME;
+			this.startGame(this.gameInProgress);
 			break;
 		case TopMenuFragment.TIMED_MATCH:
-			// TODO launch game of third type:
-			Log.d(TAG, "Would have switched to TimedMatching Game");
-			/*
-			 * DEBUGGING: building a dummy fragment with test data
-			 */
-			Drawable[] faces2 = {
-					getResources().getDrawable(R.drawable.deniro),
-					getResources().getDrawable(R.drawable.billgatesad),
-					getResources().getDrawable(R.drawable.muhammadali),
-					getResources().getDrawable(R.drawable.johncarmack) };
-			String name2 = "Robert De Niro";
-			MatchGameFragment mockFragment = MatchGameFragment.instanceOf(
-					faces2, name2, true);
-			FragmentTransaction fragmentTransaction = getFragmentManager()
-					.beginTransaction();
-			fragmentTransaction.replace(R.id.ui_fragment_container,
-					mockFragment);
-			fragmentTransaction.commit();
+			Log.d(TAG, "Starting TimedMatching Game");
 			this.gameInProgress = FACE_MATCH_TIMED_GAME;
-			/*
-			 * DEBUGGING ENDS
-			 */
+			this.startGame(this.gameInProgress);
 			break;
 		default:
 			break;
@@ -240,7 +205,7 @@ public class FaceMatchActivity extends Activity
 	 * onOptionSelected(int) Method for interaction with MatchGameFragment
 	 */
 	@Override
-	public void onChoiceSelected(int index) {
+	public void onAnswerSelected(int index) {
 
 		Log.d(TAG, "Would handle face thumb with array index " + index
 				+ " in Face Matching Game");
@@ -253,39 +218,38 @@ public class FaceMatchActivity extends Activity
 		} catch (Exception e) {
 			Log.e(TAG, "Could not get current MatchGameFragment fragment");
 		}
-
 	}
 
 	public void onRadioButtonClicked(View v) {
 		// Is the button now checked?
 		Log.d(TAG, "Radio button clicked in FaceMatchActivity!");
 		boolean checked = ((RadioButton) v).isChecked();
-		int option = 0;
+		int index = 0;
 		// Check which radio button was clicked
 		switch (v.getId()) {
 		case R.id.name_option_1:
 			if (checked)
-				option = 0;
+				index = 0;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 1");
 			break;
 		case R.id.name_option_2:
 			if (checked)
-				option = 1;
+				index = 1;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 2");
 			break;
 		case R.id.name_option_3:
 			if (checked)
-				option = 2;
+				index = 2;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 3");
 			break;
 		case R.id.name_option_4:
 			if (checked)
-				option = 3;
+				index = 3;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 4");
 			break;
 		}
 		
-		this.updateGame(this.gameInProgress, option);
+		this.updateGame(this.gameInProgress, index);
 
 	}
 
@@ -365,7 +329,6 @@ public class FaceMatchActivity extends Activity
 	private void updateCurrentFragment(final MatchGameFragment nextFragment) {
 		Handler fragSwapper = new Handler();
 		fragSwapper.postDelayed(new Runnable() {
-
 			@Override
 			public void run() {
 				final FragmentTransaction fragmentTransaction = mFragmentManager
