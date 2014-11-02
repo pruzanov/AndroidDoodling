@@ -17,19 +17,19 @@ import ca.on.oicr.pde.facematcher.util.SystemUiHider;
  * 
  * @see SystemUiHider
  */
-public class FaceMatchActivity extends Activity implements
+public class FaceMatchActivity extends Activity
+		implements
 		TopMenuFragment.OnOptionSelectedListener,
-		NameMatchFragment.OnNameSelectedListener,
-		FaceMatchFragment.OnFaceSelectedListener {
-	
-    // Game Parameters:
+		MatchGameFragment.OnChoiceSelectedListener {
+
+	// Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
-	protected static final int QUIZES_COUNT  = 5;
+	protected static final int QUIZES_COUNT = 5;
 	protected static final String TAG = "FaceMatcher";
 	// Supported Game types:
-	private static final int NAME_MATCH_GAME = 1;
-	private static final int FACE_MATCH_GAME = 2;
-	private static final int FACE_MATCH_TIMED_GAME = 3;
+	public static final int NAME_MATCH_GAME = 1;
+	public static final int FACE_MATCH_GAME = 2;
+	public static final int FACE_MATCH_TIMED_GAME = 3;
 	// Special bonus for speed
 	private static final int MAX_TIME_BONUS = 200;
 	private FragmentManager mFragmentManager;
@@ -81,14 +81,11 @@ public class FaceMatchActivity extends Activity implements
 		FragmentTransaction fragmentTransaction = mFragmentManager
 				.beginTransaction();
 		fragmentTransaction.
-		        //addToBackStack("TopMenu").
-		        add(R.id.ui_fragment_container,
-				new TopMenuFragment());
+		// addToBackStack("TopMenu").
+				add(R.id.ui_fragment_container, new TopMenuFragment());
 		fragmentTransaction.commit();
-		
+
 		getActionBar().hide();
-        int deniroID = getResources().getIdentifier("deniro", "drawable", this.getPackageName());
-		
 		new DataLoaderTask(this).execute();
 		// final View controlsView =
 		// findViewById(R.id.fullscreen_content_controls);
@@ -127,40 +124,41 @@ public class FaceMatchActivity extends Activity implements
 		// mDelayHideTouchListener);
 
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		// TODO Add a dialog asking user to confirm exit to the top menu
 		if (this.gameInProgress > 0) {
-			
+
 			FragmentTransaction fragmentTransaction = getFragmentManager()
-					                                  .beginTransaction();
+					.beginTransaction();
 			fragmentTransaction.replace(R.id.ui_fragment_container,
-					                    new TopMenuFragment());
+					new TopMenuFragment());
 			fragmentTransaction.commit();
 			this.gameInProgress = 0;
 		} else {
 			super.onBackPressed();
 		}
 	}
-	
+
 	/*
 	 * Called from asynchronous task, adds validated data
 	 */
 	protected void addGameData(OicrPerson[] data) {
-	   this.mGame = new MatchGame(data);
-	   //TODO show dialog, dismiss on load
-	   try {
-	     Thread.sleep(300);
-	   } catch (InterruptedException IE) {
-		 Log.e(TAG, "Data producing thread was interrupted");  
-	   }
+		this.mGame = new MatchGame(data);
+		// TODO show dialog, dismiss on load
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException IE) {
+			Log.e(TAG, "Data producing thread was interrupted");
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see ca.on.oicr.pde.facematcher.TopMenuFragment.OnOptionSelectedListener#onOptionSelected(int)
-	 * Method for communicating with Top Menu Fragment
+	 * 
+	 * @see ca.on.oicr.pde.facematcher.TopMenuFragment.OnOptionSelectedListener#
+	 * onOptionSelected(int) Method for communicating with Top Menu Fragment
 	 */
 	@Override
 	public void onOptionSelected(int position) {
@@ -180,9 +178,7 @@ public class FaceMatchActivity extends Activity implements
 					"Would Have Switched to LeaderBoard Fragment, if possible");
 			break;
 		case TopMenuFragment.NAME_MATCH:
-			// TODO launch game of first type
 			Log.d(TAG, "Starting NameMatching Game");
-			// mFragmentManager = getFragmentManager();
 			this.gameInProgress = NAME_MATCH_GAME;
 			this.startGame(this.gameInProgress);
 			break;
@@ -192,14 +188,19 @@ public class FaceMatchActivity extends Activity implements
 			/*
 			 * DEBUGGING: building a dummy fragment with test data
 			 */
-			Drawable[] faces = {getResources().getDrawable(R.drawable.deniro), getResources().getDrawable(R.drawable.billgatesad),
-					            getResources().getDrawable(R.drawable.muhammadali), getResources().getDrawable(R.drawable.johncarmack)};
+			Drawable[] faces = { getResources().getDrawable(R.drawable.deniro),
+					getResources().getDrawable(R.drawable.billgatesad),
+					getResources().getDrawable(R.drawable.muhammadali),
+					getResources().getDrawable(R.drawable.johncarmack) };
 			String name = "Robert De Niro";
-			FaceMatchFragment mockFragment2 = FaceMatchFragment.instanceOf(faces, name);
-			FragmentTransaction fragmentTransaction2 = getFragmentManager().beginTransaction();
-			fragmentTransaction2.replace(R.id.ui_fragment_container, mockFragment2);
-			fragmentTransaction2.addToBackStack("TopMenu");
+			MatchGameFragment mockFragment2 = MatchGameFragment.instanceOf(
+					faces, name, false);
+			FragmentTransaction fragmentTransaction2 = getFragmentManager()
+					.beginTransaction();
+			fragmentTransaction2.replace(R.id.ui_fragment_container,
+					mockFragment2);
 			fragmentTransaction2.commit();
+			this.gameInProgress = FACE_MATCH_GAME;
 			break;
 		case TopMenuFragment.TIMED_MATCH:
 			// TODO launch game of third type:
@@ -207,12 +208,18 @@ public class FaceMatchActivity extends Activity implements
 			/*
 			 * DEBUGGING: building a dummy fragment with test data
 			 */
-			String[] names = {"Che Gevara","Robert De Niro","Pope Francis","Bill Gates"};
-			NameMatchFragment mockFragment = NameMatchFragment.instanceOf(getResources().getDrawable(R.drawable.deniro), names);
-			mFragmentManager = getFragmentManager();
-			FragmentTransaction fragmentTransaction = mFragmentManager .beginTransaction();	
-			fragmentTransaction.replace(R.id.ui_fragment_container, mockFragment,"current");
-			fragmentTransaction.addToBackStack("TopMenu");
+			Drawable[] faces2 = {
+					getResources().getDrawable(R.drawable.deniro),
+					getResources().getDrawable(R.drawable.billgatesad),
+					getResources().getDrawable(R.drawable.muhammadali),
+					getResources().getDrawable(R.drawable.johncarmack) };
+			String name2 = "Robert De Niro";
+			MatchGameFragment mockFragment = MatchGameFragment.instanceOf(
+					faces2, name2, true);
+			FragmentTransaction fragmentTransaction = getFragmentManager()
+					.beginTransaction();
+			fragmentTransaction.replace(R.id.ui_fragment_container,
+					mockFragment);
 			fragmentTransaction.commit();
 			this.gameInProgress = FACE_MATCH_TIMED_GAME;
 			/*
@@ -224,32 +231,31 @@ public class FaceMatchActivity extends Activity implements
 		}
 		;
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see ca.on.oicr.pde.facematcher.NameMatchFragment.OnNameSelectedListener#onNameSelected(int)
-	 * Method for interaction with Name Matching Fragment
-	 */
 
-	@Override
-	public void onNameSelected(int option) {
-		// TODO implement name-processing code
-		Log.d(TAG, "Would handle name selection in Name Matching Game");
-		// this.mMatchGame.setup(NAME_MATCH, TRIES);
-		// 
-	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see ca.on.oicr.pde.facematcher.FaceMatchFragment.OnFaceSelectedListener#onFaceSelected(int)
-	 * Method for interaction with Face Matching Fragment
+	 * 
+	 * @see ca.on.oicr.pde.facematcher.MatchGameFragment.OnOptionSelectedListener#
+	 * onOptionSelected(int) Method for interaction with MatchGameFragment
 	 */
 	@Override
-	public void onFaceSelected(int option) {
-		// TODO Auto-generated method stub
-		Log.d(TAG, "Would handle face selection for Option " + option + " in Face Matching Game");
+	public void onChoiceSelected(int index) {
+
+		Log.d(TAG, "Would handle face thumb with array index " + index
+				+ " in Face Matching Game");
+		try {
+			MatchGameFragment current = (MatchGameFragment) getFragmentManager()
+					.findFragmentByTag("CURRENT");
+			current.showAnswers(index);
+			Log.d(TAG, "Showing answers, would update scores");
+			this.updateGame(this.gameInProgress, index);
+		} catch (Exception e) {
+			Log.e(TAG, "Could not get current MatchGameFragment fragment");
+		}
+
 	}
-	
+
 	public void onRadioButtonClicked(View v) {
 		// Is the button now checked?
 		Log.d(TAG, "Radio button clicked in FaceMatchActivity!");
@@ -259,37 +265,30 @@ public class FaceMatchActivity extends Activity implements
 		switch (v.getId()) {
 		case R.id.name_option_1:
 			if (checked)
-			option = 1;
+				option = 0;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 1");
 			break;
 		case R.id.name_option_2:
 			if (checked)
-			option = 2;
+				option = 1;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 2");
 			break;
 		case R.id.name_option_3:
 			if (checked)
-			option = 3;
+				option = 2;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 3");
 			break;
 		case R.id.name_option_4:
 			if (checked)
-			option = 4;
+				option = 3;
 			Log.d(FaceMatchActivity.TAG, "Selected Option 4");
 			break;
 		}
-		//TODO Reveal answers for this fragment here
-		try {
-			NameMatchFragment current = (NameMatchFragment) getFragmentManager()
-					.findFragmentByTag("CURRENT");
-			current.showAnswers(option);
-			Log.d(TAG, "Showing answers, would updates scores");
-			this.updateGame(this.gameInProgress);
-		} catch (Exception e) {
-		    Log.e(TAG, "Could not get current NameMatchFragment fragment");
-		}
 		
+		this.updateGame(this.gameInProgress, option);
+
 	}
+
 	// @Override
 	/*
 	 * protected void onPostCreate(Bundle savedInstanceState) {
@@ -300,72 +299,86 @@ public class FaceMatchActivity extends Activity implements
 	 * delayedHide(100); }
 	 */
 
-	private void startGame (int type) {
+	private void startGame(int type) {
 		if (null == this.mGame) {
-		    Log.e(TAG,"Game was not setup properly, won't start");
+			Log.e(TAG, "Game was not setup properly, won't start");
 			return;
 		}
 		this.currentScore = 0;
-		this.timeBonus    = MAX_TIME_BONUS;
+		this.timeBonus = MAX_TIME_BONUS;
 		this.gameFragmentCounter = 0;
-		this.updateGame(type);
+		this.updateGame(type, -1);
 	}
-	
-	private void updateGame(int type) {	
-		if (type != FACE_MATCH_TIMED_GAME && this.gameFragmentCounter >= QUIZES_COUNT) {
+
+	private void updateGame(int type, int answer) {
+
+		if (type != FACE_MATCH_TIMED_GAME
+				&& this.gameFragmentCounter >= QUIZES_COUNT) {
 			this.finishGame();
-		    return;
+			return;
+		}
+		// Reveal answers if user made a choice
+		if (answer >= 0) {
+			try {
+				MatchGameFragment current = (MatchGameFragment) getFragmentManager()
+						.findFragmentByTag("CURRENT");
+				current.showAnswers(answer);
+				Log.d(TAG, "Showing answers, would updates scores");
+			} catch (Exception e) {
+				Log.e(TAG, "Could not get current MatchGameFragment fragment");
+			}
 		}
 		MatchGame.GameSet nextSet = this.mGame.getNextGameSet();
 		this.constructAndShowNext(nextSet, type);
 	}
 
 	private void finishGame() {
-		// TODO
-		Log.d(TAG,"Finishing game, would show score");
+		Log.d(TAG, "Finishing game, would show score");
 		this.onBackPressed();
-		// update score, show dialog and help reset to top menu
+		// TODO update score, show dialog and help reset to top menu
 	}
-	
-	private void constructAndShowNext (MatchGame.GameSet set, int type) {
-		// TODO construct proper fragment and replace current one with the new one
+
+	private void constructAndShowNext(MatchGame.GameSet set, int type) {
 		this.gameFragmentCounter++;
-		Handler fragSwapper = new Handler();
-		final FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+		final MatchGameFragment nextFragment;
 		
 		if (type == NAME_MATCH_GAME) {
 			Drawable thumb = getResources().getDrawable(
-			                 getResources().getIdentifier(set.URLs[set.indexMe], "drawable", this.getPackageName()));
-			final NameMatchFragment nmFragment = NameMatchFragment.instanceOf(thumb, set.peopleNames);
-			fragSwapper.postDelayed(new Runnable(){
-				//TODO use this code for swapping fragments in a generic way
-					@Override
-					public void run() {
-						fragmentTransaction.setCustomAnimations(R.animator.fade_in, 
-								                                R.animator.fade_out);
-						fragmentTransaction.replace(R.id.ui_fragment_container, nmFragment, "CURRENT");
-						fragmentTransaction.commit();
-					}}, 1000L);
+					getResources().getIdentifier(set.URLs[set.indexMe],
+							"drawable", this.getPackageName()));
+			nextFragment = MatchGameFragment.instanceOf(thumb, set.peopleNames);
+			this.updateCurrentFragment(nextFragment);
 		} else if (type == FACE_MATCH_GAME || type == FACE_MATCH_TIMED_GAME) {
-		  Drawable[] thumbs = new Drawable[OPTIONS_COUNT];
-		  for (int d = 0; d < OPTIONS_COUNT; d++) {
-			  thumbs[d] = getResources().getDrawable(
-		                  getResources().getIdentifier(set.URLs[d], "drawable", this.getPackageName()));
-		  }
-		  final FaceMatchFragment fmFragment = FaceMatchFragment.instanceOf(thumbs, set.peopleNames[set.indexMe]);
-		  fragSwapper.postDelayed(new Runnable(){
-				//TODO use this code for swapping fragments in a generic way
-					@Override
-					public void run() {
-						fragmentTransaction.setCustomAnimations(R.animator.fade_in, 
-								                                R.animator.fade_out);
-						fragmentTransaction.replace(R.id.ui_fragment_container, fmFragment, "CURRENT");
-						fragmentTransaction.commit();
-					}}, 1000L);
+			Drawable[] thumbs = new Drawable[OPTIONS_COUNT];
+			for (int d = 0; d < OPTIONS_COUNT; d++) {
+				thumbs[d] = getResources().getDrawable(
+						getResources().getIdentifier(set.URLs[d], "drawable",
+								this.getPackageName()));
+			}
+			boolean timer = type == FACE_MATCH_TIMED_GAME ? true : false;
+			nextFragment = MatchGameFragment.instanceOf(
+					thumbs, set.peopleNames[set.indexMe], timer);
+			this.updateCurrentFragment(nextFragment);
 		}
-	//"CURRENT"
 	}
 	
+	private void updateCurrentFragment(final MatchGameFragment nextFragment) {
+		Handler fragSwapper = new Handler();
+		fragSwapper.postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				final FragmentTransaction fragmentTransaction = mFragmentManager
+						.beginTransaction();
+				fragmentTransaction.setCustomAnimations(R.animator.fade_in,
+						R.animator.fade_out);
+				fragmentTransaction.replace(R.id.ui_fragment_container,
+						nextFragment, "CURRENT");
+				fragmentTransaction.commit();
+			}
+		}, 1000L);
+	}
+
 	/**
 	 * Touch listener to use for in-layout UI controls to delay hiding the
 	 * system UI. This is to prevent the jarring behaviour of controls going
@@ -397,8 +410,6 @@ public class FaceMatchActivity extends Activity implements
 	 */
 
 	/*
-	 * private void startGame (int gameType) { // TODO read, randomize and
-	 * present data using ArrayList }
 	 * 
 	 * private void updateAndShowScore () { // TODO get current score and append
 	 * to the total score, check if // we earn any bonus/badges }
