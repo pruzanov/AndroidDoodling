@@ -43,57 +43,65 @@
     <ImageView
         android:id="@+id/answer_feedback"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_gravity="center_vertical|left"
+        android:layout_height="33dp"
+        android:layout_gravity="start"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
         android:contentDescription="@string/image_type"
-        android:src="@drawable/ic_check"
-        android:visibility="invisible" />
+        android:src="@drawable/msg_answer" />
 
     <RadioGroup
         android:id="@+id/name_options"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_weight="1" >
 
         <RadioButton
             android:id="@+id/name_option_1"
+            android:layout_width="match_parent"
             android:layout_gravity="center_vertical"
+            android:layout_marginBottom="4dp"
             android:onClick="onRadioButtonClicked"
             android:text="Dmitri Mendeleev"
             android:textSize="26sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:background="@color/neutral_answer" />
 
         <RadioButton
             android:id="@+id/name_option_2"
+            android:layout_width="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="4dp"
             android:onClick="onRadioButtonClicked"
             android:text="Jonas Salk"
             android:textSize="26sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:background="@color/neutral_answer" />
 
         <RadioButton
             android:id="@+id/name_option_3"
+            android:layout_width="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="4dp"
             android:onClick="onRadioButtonClicked"
             android:text="John Carmack"
             android:textSize="26sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:background="@color/neutral_answer" />
 
         <RadioButton
             android:id="@+id/name_option_4"
+            android:layout_width="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="8dp"
             android:onClick="onRadioButtonClicked"
             android:text="Robert De Niro"
             android:textSize="26sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:background="@color/neutral_answer" />
     </RadioGroup>
 
 </LinearLayout>

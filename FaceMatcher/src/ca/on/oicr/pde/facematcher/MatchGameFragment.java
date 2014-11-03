@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,8 +15,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 public class MatchGameFragment extends Fragment {
-	private static final int[] image_ids = { R.id.face_thumbnail_1,
-			R.id.face_thumbnail_2, R.id.face_thumbnail_3, R.id.face_thumbnail_4 };
+	private static final int[] image_ids = { R.id.face_thumbnail_1,	R.id.face_thumbnail_2,
+		                                     R.id.face_thumbnail_3, R.id.face_thumbnail_4 };
 	OnAnswerSelectedListener mCallback;
 	private Drawable[] faceThumbnails;
 	private String name;
@@ -185,6 +184,9 @@ public class MatchGameFragment extends Fragment {
 		}
 	}
 
+	/*
+	 * This methods reveals the right (and wrong, if answered incorrectly) quiz answer(s)
+	 */
 	public void showAnswers(int answer) {
 		// Show Yes, I'm and mark right answer with green bg
 		if (this.getGameType() == FaceMatchActivity.NAME_MATCH_GAME) {
@@ -195,17 +197,16 @@ public class MatchGameFragment extends Fragment {
 			RadioButton rb_answer = (RadioButton) getView().findViewById(optionsIDs[answer]);
 			if (answer == this.getRightAnswer()) {
 				feedbackView.setImageDrawable(getResources().getDrawable(
-						R.drawable.ic_check));	
+						R.drawable.msg_check));	
 				rb_answer.setBackgroundColor(getResources().getColor(R.color.right_answer));
 			} else {
 				feedbackView.setImageDrawable(getResources().getDrawable(
-						R.drawable.ic_x));
+						R.drawable.msg_x));
 				rb_answer.setBackgroundColor(getResources().getColor(R.color.wrong_answer));
 				RadioButton rb_right_answer = (RadioButton) getView()
 						.findViewById(optionsIDs[this.getRightAnswer()]);
 				rb_right_answer.setBackgroundColor(getResources().getColor(R.color.right_answer));
 			}
-			feedbackView.setVisibility(View.VISIBLE);
 		} else {
 			int [] thumbIDs = {R.id.face_thumbnail_1, R.id.face_thumbnail_2,
 		                       R.id.face_thumbnail_3, R.id.face_thumbnail_4};

@@ -1,7 +1,8 @@
 <resources>
 
     <color name="black_overlay">#66000000</color>
-    <color name="wrong_answer">#FF00CC</color>
+    <color name="wrong_answer">#CC3300</color>
     <color name="right_answer">#99CC00</color>
+    <color name="neutral_answer">#336666</color>
 
 </resources>
