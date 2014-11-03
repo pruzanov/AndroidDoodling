@@ -16,15 +16,24 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 public class MatchGameFragment extends Fragment {
-	private static final int[] image_ids = { R.id.face_thumbnail_1, R.id.face_thumbnail_2,
-		                                     R.id.face_thumbnail_3, R.id.face_thumbnail_4 };
-	OnChoiceSelectedListener mCallback;
+	private static final int[] image_ids = { R.id.face_thumbnail_1,
+			R.id.face_thumbnail_2, R.id.face_thumbnail_3, R.id.face_thumbnail_4 };
+	OnAnswerSelectedListener mCallback;
 	private Drawable[] faceThumbnails;
 	private String name;
 	private Drawable faceThumbnail;
 	private String[] names;
-	//Supported game type
+	// Supported game type
 	private int gameType;
+	private int rightAnswer;
+
+	public int getRightAnswer() {
+		return rightAnswer;
+	}
+
+	public void setRightAnswer(int rightAnswer) {
+		this.rightAnswer = rightAnswer;
+	}
 
 	public int getGameType() {
 		return gameType;
@@ -35,51 +44,58 @@ public class MatchGameFragment extends Fragment {
 	}
 
 	// FaceMatchFragment version
-	public static MatchGameFragment instanceOf(Drawable[] faces, String name, boolean timer) {
+	public static MatchGameFragment instanceOf(Drawable[] faces, String name,
+			boolean timer, int rightIdx) {
 		MatchGameFragment fragment = new MatchGameFragment();
 		fragment.setFaceThumbnails(faces);
 		fragment.setName(name);
+		fragment.setRightAnswer(rightIdx);
 		if (timer) {
-	         fragment.setGameType(FaceMatchActivity.FACE_MATCH_TIMED_GAME);
-			} else {
-			 fragment.setGameType(FaceMatchActivity.FACE_MATCH_GAME);
-			}
+			fragment.setGameType(FaceMatchActivity.FACE_MATCH_TIMED_GAME);
+		} else {
+			fragment.setGameType(FaceMatchActivity.FACE_MATCH_GAME);
+		}
 		return fragment;
 	}
 
 	// NameMatchFragment version
-	public static MatchGameFragment instanceOf(Drawable face, String[] names) {
+	public static MatchGameFragment instanceOf(Drawable face, String[] names,
+			int rightIdx) {
 		MatchGameFragment fragment = new MatchGameFragment();
 		fragment.setFaceThumbnail(face);
 		fragment.setOptions(names);
 		fragment.setGameType(FaceMatchActivity.NAME_MATCH_GAME);
-        return fragment;
+		fragment.setRightAnswer(rightIdx);
+		return fragment;
 	}
 
 	// Container Activity must implement this interface
-	public interface OnChoiceSelectedListener {
-		public void onChoiceSelected(int option);
+	public interface OnAnswerSelectedListener {
+		public void onAnswerSelected(int option);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		if (this.getGameType() == FaceMatchActivity.NAME_MATCH_GAME) {
-			return onCreateNameMatchView(inflater, container, savedInstanceState);
+			return onCreateNameMatchView(inflater, container,
+					savedInstanceState);
 		} else if (this.getGameType() == FaceMatchActivity.FACE_MATCH_GAME) {
-			return onCreateFaceMatchView(inflater, container, savedInstanceState);
+			return onCreateFaceMatchView(inflater, container,
+					savedInstanceState);
 		} else if (this.getGameType() == FaceMatchActivity.FACE_MATCH_TIMED_GAME) {
-			return onCreateFaceMatchView(inflater, container, savedInstanceState);
+			return onCreateFaceMatchView(inflater, container,
+					savedInstanceState);
 		}
 		return null;
 	}
-	 
+
 	/*
 	 * onCreateView() methods for FaceMatchFragment
 	 */
-    public View onCreateFaceMatchView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-    	View rootView = inflater.inflate(R.layout.face_match_fragment,
+	public View onCreateFaceMatchView(LayoutInflater inflater,
+			ViewGroup container, Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.face_match_fragment,
 				container, false);
 
 		for (int i = 0; i < image_ids.length; i++) {
@@ -106,8 +122,9 @@ public class MatchGameFragment extends Fragment {
 						break;
 					default:
 						break;
-					};
-					mCallback.onChoiceSelected(option);
+					}
+					;
+					mCallback.onAnswerSelected(option);
 					return v.performClick();
 				}
 			});
@@ -115,16 +132,16 @@ public class MatchGameFragment extends Fragment {
 
 		TextView p_name = (TextView) rootView.findViewById(R.id.person_name);
 		p_name.setText(this.name);
-		
+
 		return rootView;
-    }
-	
-    /*
-     * onCreateView() method for NameMatchFragment
-     */
-    public View onCreateNameMatchView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-    	View rootView = inflater.inflate(R.layout.name_match_fragment,
+	}
+
+	/*
+	 * onCreateView() method for NameMatchFragment
+	 */
+	public View onCreateNameMatchView(LayoutInflater inflater,
+			ViewGroup container, Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.name_match_fragment,
 				container, false);
 		ImageView thumb = (ImageView) rootView
 				.findViewById(R.id.face_thumbnail);
@@ -136,8 +153,8 @@ public class MatchGameFragment extends Fragment {
 		}
 
 		return rootView;
-    }
-    
+	}
+
 	// Mehods for initialization
 	public void setFaceThumbnails(Drawable[] faces) {
 		this.faceThumbnails = faces;
@@ -161,7 +178,7 @@ public class MatchGameFragment extends Fragment {
 		// This makes sure that the container activity has implemented
 		// the callback interface. If not, it throws an exception
 		try {
-			mCallback = (OnChoiceSelectedListener) activity;
+			mCallback = (OnAnswerSelectedListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
 					+ " must implement OnChoiceSelectedListener");
@@ -169,8 +186,55 @@ public class MatchGameFragment extends Fragment {
 	}
 
 	public void showAnswers(int answer) {
-		// TODO show correct (and user's answer if it is incorrect)
-		Log.d(FaceMatchActivity.TAG, "Would have shown the answers");
-	}
+		// Show Yes, I'm and mark right answer with green bg
+		if (this.getGameType() == FaceMatchActivity.NAME_MATCH_GAME) {
+			ImageView feedbackView = (ImageView) getView().findViewById(
+					             R.id.answer_feedback);
+			int [] optionsIDs = {R.id.name_option_1, R.id.name_option_2,
+						         R.id.name_option_3, R.id.name_option_4};
+			RadioButton rb_answer = (RadioButton) getView().findViewById(optionsIDs[answer]);
+			if (answer == this.getRightAnswer()) {
+				feedbackView.setImageDrawable(getResources().getDrawable(
+						R.drawable.ic_check));	
+				rb_answer.setBackgroundColor(getResources().getColor(R.color.right_answer));
+			} else {
+				feedbackView.setImageDrawable(getResources().getDrawable(
+						R.drawable.ic_x));
+				rb_answer.setBackgroundColor(getResources().getColor(R.color.wrong_answer));
+				RadioButton rb_right_answer = (RadioButton) getView()
+						.findViewById(optionsIDs[this.getRightAnswer()]);
+				rb_right_answer.setBackgroundColor(getResources().getColor(R.color.right_answer));
+			}
+			feedbackView.setVisibility(View.VISIBLE);
+		} else {
+			int [] thumbIDs = {R.id.face_thumbnail_1, R.id.face_thumbnail_2,
+		                       R.id.face_thumbnail_3, R.id.face_thumbnail_4};
+			int [] feedbackIDs = {R.id.feedback_icon_1, R.id.feedback_icon_2,
+					              R.id.feedback_icon_3, R.id.feedback_icon_4};
+			for (int i = 0; i < FaceMatchActivity.OPTIONS_COUNT; i++) {
+				ImageView thumbnailView = (ImageView) getView().findViewById(
+						thumbIDs[i]);
+				ImageView feedbackView = (ImageView) getView().findViewById(
+						feedbackIDs[i]);
+				if (i == answer) {
+				   feedbackView.setVisibility(View.VISIBLE);
+				   if (answer == this.getRightAnswer()) {  
+					 feedbackView.setImageDrawable(getResources()
+							                      .getDrawable(R.drawable.ic_check));	 
+					 continue;  
+				   } else {
+					 feedbackView.setImageDrawable(getResources()
+							                      .getDrawable(R.drawable.ic_x));
+				   }
+				} else if (i == this.getRightAnswer()) {
+					feedbackView.setImageDrawable(getResources()
+		                      .getDrawable(R.drawable.ic_check));
+                    feedbackView.setVisibility(View.VISIBLE);
+                    continue;
+				}
+				thumbnailView.setAlpha(0.3f);
+			}
+		  }
 
+		}
 }

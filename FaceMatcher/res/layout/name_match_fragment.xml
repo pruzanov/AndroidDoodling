@@ -35,10 +35,22 @@
         android:layout_width="match_parent"
         android:layout_height="220dp"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:contentDescription="@string/image_type"
         android:src="@drawable/deniro" />
+    
+    <ImageView
+        android:id="@+id/answer_feedback"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical|left"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:contentDescription="@string/image_type"
+        android:src="@drawable/ic_check"
+        android:visibility="invisible" />
 
     <RadioGroup
         android:id="@+id/name_options"
@@ -51,7 +63,6 @@
         <RadioButton
             android:id="@+id/name_option_1"
             android:layout_gravity="center_vertical"
-            android:background="#FF00CC"
             android:onClick="onRadioButtonClicked"
             android:text="Dmitri Mendeleev"
             android:textSize="26sp"

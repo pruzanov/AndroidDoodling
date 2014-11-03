@@ -1,8 +1,10 @@
 package ca.on.oicr.pde.facematcher;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,8 +19,7 @@ import ca.on.oicr.pde.facematcher.util.SystemUiHider;
  * 
  * @see SystemUiHider
  */
-public class FaceMatchActivity extends Activity
-		implements
+public class FaceMatchActivity extends Activity implements
 		TopMenuFragment.OnOptionSelectedListener,
 		MatchGameFragment.OnAnswerSelectedListener {
 
@@ -127,18 +128,52 @@ public class FaceMatchActivity extends Activity
 
 	@Override
 	public void onBackPressed() {
-		// TODO Add a dialog asking user to confirm exit to the top menu
-		if (this.gameInProgress > 0) {
 
-			FragmentTransaction fragmentTransaction = getFragmentManager()
-					.beginTransaction();
-			fragmentTransaction.replace(R.id.ui_fragment_container,
-					new TopMenuFragment());
-			fragmentTransaction.commit();
-			this.gameInProgress = 0;
+		if (this.gameInProgress > 0) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setIcon(R.drawable.ic_action_warning);
+			builder.setTitle(R.string.game_close_warning);
+			builder.setPositiveButton(R.string.ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							// User clicked OK button
+							Log.d(TAG, "User Chose to close, exiting game");
+							FaceMatchActivity.this.goToTopMenu();
+						}
+					});
+			builder.setNegativeButton(R.string.cancel,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							Log.d(TAG,
+									"User Chose to cancel exit, returning to game");
+							return;
+						}
+					});
+
+			AlertDialog dialog = builder.create();
+			dialog.show();
+
 		} else {
 			super.onBackPressed();
 		}
+	}
+
+	private void goToTopMenu() {
+		final TopMenuFragment topFragment = new TopMenuFragment();
+		Handler fragSwapper = new Handler();
+		fragSwapper.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				final FragmentTransaction fragmentTransaction = mFragmentManager
+						.beginTransaction();
+				fragmentTransaction.setCustomAnimations(R.animator.fade_in,
+						R.animator.fade_out);
+				fragmentTransaction.replace(R.id.ui_fragment_container,
+						topFragment);
+				fragmentTransaction.commit();
+			}
+		}, 1000L);
+		this.gameInProgress = 0;
 	}
 
 	/*
@@ -197,27 +232,18 @@ public class FaceMatchActivity extends Activity
 		;
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see ca.on.oicr.pde.facematcher.MatchGameFragment.OnOptionSelectedListener#
+	 * @see
+	 * ca.on.oicr.pde.facematcher.MatchGameFragment.OnOptionSelectedListener#
 	 * onOptionSelected(int) Method for interaction with MatchGameFragment
 	 */
 	@Override
 	public void onAnswerSelected(int index) {
-
 		Log.d(TAG, "Would handle face thumb with array index " + index
 				+ " in Face Matching Game");
-		try {
-			MatchGameFragment current = (MatchGameFragment) getFragmentManager()
-					.findFragmentByTag("CURRENT");
-			current.showAnswers(index);
-			Log.d(TAG, "Showing answers, would update scores");
-			this.updateGame(this.gameInProgress, index);
-		} catch (Exception e) {
-			Log.e(TAG, "Could not get current MatchGameFragment fragment");
-		}
+		this.updateGame(this.gameInProgress, index);
 	}
 
 	public void onRadioButtonClicked(View v) {
@@ -248,7 +274,7 @@ public class FaceMatchActivity extends Activity
 			Log.d(FaceMatchActivity.TAG, "Selected Option 4");
 			break;
 		}
-		
+
 		this.updateGame(this.gameInProgress, index);
 
 	}
@@ -276,11 +302,6 @@ public class FaceMatchActivity extends Activity
 
 	private void updateGame(int type, int answer) {
 
-		if (type != FACE_MATCH_TIMED_GAME
-				&& this.gameFragmentCounter >= QUIZES_COUNT) {
-			this.finishGame();
-			return;
-		}
 		// Reveal answers if user made a choice
 		if (answer >= 0) {
 			try {
@@ -292,25 +313,39 @@ public class FaceMatchActivity extends Activity
 				Log.e(TAG, "Could not get current MatchGameFragment fragment");
 			}
 		}
+
+		if (type != FACE_MATCH_TIMED_GAME
+				&& this.gameFragmentCounter >= QUIZES_COUNT) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ie) {
+				Log.d(TAG, "Interrupted");
+			}
+			this.finishGame();
+			return;
+		}
+
 		MatchGame.GameSet nextSet = this.mGame.getNextGameSet();
 		this.constructAndShowNext(nextSet, type);
 	}
 
 	private void finishGame() {
 		Log.d(TAG, "Finishing game, would show score");
-		this.onBackPressed();
+		this.gameInProgress = 0;
+		this.goToTopMenu();
 		// TODO update score, show dialog and help reset to top menu
 	}
 
 	private void constructAndShowNext(MatchGame.GameSet set, int type) {
 		this.gameFragmentCounter++;
 		final MatchGameFragment nextFragment;
-		
+
 		if (type == NAME_MATCH_GAME) {
 			Drawable thumb = getResources().getDrawable(
 					getResources().getIdentifier(set.URLs[set.indexMe],
 							"drawable", this.getPackageName()));
-			nextFragment = MatchGameFragment.instanceOf(thumb, set.peopleNames);
+			nextFragment = MatchGameFragment.instanceOf(thumb, set.peopleNames,
+					set.indexMe);
 			this.updateCurrentFragment(nextFragment);
 		} else if (type == FACE_MATCH_GAME || type == FACE_MATCH_TIMED_GAME) {
 			Drawable[] thumbs = new Drawable[OPTIONS_COUNT];
@@ -320,12 +355,12 @@ public class FaceMatchActivity extends Activity
 								this.getPackageName()));
 			}
 			boolean timer = type == FACE_MATCH_TIMED_GAME ? true : false;
-			nextFragment = MatchGameFragment.instanceOf(
-					thumbs, set.peopleNames[set.indexMe], timer);
+			nextFragment = MatchGameFragment.instanceOf(thumbs,
+					set.peopleNames[set.indexMe], timer, set.indexMe);
 			this.updateCurrentFragment(nextFragment);
 		}
 	}
-	
+
 	private void updateCurrentFragment(final MatchGameFragment nextFragment) {
 		Handler fragSwapper = new Handler();
 		fragSwapper.postDelayed(new Runnable() {
