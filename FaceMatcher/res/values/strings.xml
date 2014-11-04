@@ -17,5 +17,6 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="game_close_warning">This will abort the game, proceed?</string>
+    <string name="show_score_warning">Game Over</string>
 
 </resources>

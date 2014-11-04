@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -33,12 +34,16 @@ public class FaceMatchActivity extends Activity implements
 	public static final int FACE_MATCH_TIMED_GAME = 3;
 	// Special bonus for speed
 	private static final int MAX_TIME_BONUS = 200;
+	private static final int GUESSED_RIGHT_SCORE = 10;
+	private static final int GAME_SPAN = 120;
+	
 	private FragmentManager mFragmentManager;
 	private MatchGame mGame;
 	private int gameInProgress;
 	private int currentScore;
 	private int timeBonus;
 	private int gameFragmentCounter;
+	private boolean timerCancelled;
 
 	/**
 	 * Whether or not the system UI should be auto-hidden after
@@ -71,7 +76,8 @@ public class FaceMatchActivity extends Activity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		gameInProgress = 0;
+		this.gameInProgress = 0;
+		this.timerCancelled = true;
 		Log.i(TAG, getClass().getSimpleName() + ":entered onCreate()");
 
 		super.onCreate(savedInstanceState);
@@ -82,7 +88,6 @@ public class FaceMatchActivity extends Activity implements
 		FragmentTransaction fragmentTransaction = mFragmentManager
 				.beginTransaction();
 		fragmentTransaction.
-		// addToBackStack("TopMenu").
 				add(R.id.ui_fragment_container, new TopMenuFragment());
 		fragmentTransaction.commit();
 
@@ -297,6 +302,8 @@ public class FaceMatchActivity extends Activity implements
 		this.currentScore = 0;
 		this.timeBonus = MAX_TIME_BONUS;
 		this.gameFragmentCounter = 0;
+		this.timerCancelled = false;
+		new TimerTask().execute(FaceMatchActivity.GAME_SPAN);
 		this.updateGame(type, -1);
 	}
 
@@ -309,6 +316,9 @@ public class FaceMatchActivity extends Activity implements
 						.findFragmentByTag("CURRENT");
 				current.showAnswers(answer);
 				Log.d(TAG, "Showing answers, would updates scores");
+				if (answer == current.getRightAnswer()) {
+					this.currentScore += GUESSED_RIGHT_SCORE;
+				}
 			} catch (Exception e) {
 				Log.e(TAG, "Could not get current MatchGameFragment fragment");
 			}
@@ -331,9 +341,23 @@ public class FaceMatchActivity extends Activity implements
 
 	private void finishGame() {
 		Log.d(TAG, "Finishing game, would show score");
+		this.timerCancelled = true;
 		this.gameInProgress = 0;
-		this.goToTopMenu();
-		// TODO update score, show dialog and help reset to top menu
+		String scoreMessage = "Your Score: " + (this.currentScore + this.timeBonus);
+		//SHOW SCORE
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setIcon(R.drawable.ic_action_warning);
+		builder.setTitle(R.string.show_score_warning);
+		builder.setMessage(scoreMessage);
+		builder.setPositiveButton(R.string.ok,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						FaceMatchActivity.this.goToTopMenu();
+					}
+				});
+		
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 
 	private void constructAndShowNext(MatchGame.GameSet set, int type) {
@@ -414,5 +438,47 @@ public class FaceMatchActivity extends Activity implements
 	 * 
 	 * private void showLeaderboard () { // TODO }
 	 */
+	class TimerTask extends AsyncTask<Integer, Integer, Void> {
+
+		@Override
+		protected void onPostExecute(Void result) {
+        	if (FaceMatchActivity.this.gameInProgress == FACE_MATCH_TIMED_GAME) {
+				FaceMatchActivity.this.finishGame();
+			}
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			// decrement time bonus
+			FaceMatchActivity.this.timeBonus = values[0];
+			if (FaceMatchActivity.this.timeBonus < 0)
+				FaceMatchActivity.this.timeBonus = 0;
+			Log.d(TAG, "Current Time bonus: " + FaceMatchActivity.this.timeBonus);
+			Log.d(TAG, "Current Timer secs: " + values[1]);
+		}
+
+		@Override
+		protected Void doInBackground(Integer... params) {
+            int timerSeconds = params[0];
+			for (int t = 0; t <= params[0]; t++) {
+				if (FaceMatchActivity.this.timerCancelled)
+					break;
+				try {
+					Thread.sleep(1000L);
+				} catch(InterruptedException ie) {
+					Log.d(TAG, "Timer Thread was interupted");
+				}
+				timerSeconds--;
+				int progress = (int)((1.0f - (t/(float)params[0])) * FaceMatchActivity.MAX_TIME_BONUS);
+				Log.d(TAG, "Progress is " + progress);
+				
+				this.publishProgress(progress, timerSeconds);
+			}
+			return null;
+			
+		}
+		
+	}
+
 
 }

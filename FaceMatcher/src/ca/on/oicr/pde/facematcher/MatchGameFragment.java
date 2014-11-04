@@ -15,6 +15,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 public class MatchGameFragment extends Fragment {
+	private static final int MAX_TIME = 600;
 	private static final int[] image_ids = { R.id.face_thumbnail_1,	R.id.face_thumbnail_2,
 		                                     R.id.face_thumbnail_3, R.id.face_thumbnail_4 };
 	OnAnswerSelectedListener mCallback;
@@ -238,4 +239,25 @@ public class MatchGameFragment extends Fragment {
 		  }
 
 		}
+	
+	public void updateTimer (int seconds) {
+		// Forbid time of more than MAX_TIME:
+		if (seconds > MAX_TIME)
+			seconds = MAX_TIME;
+		
+		StringBuilder tSB = new StringBuilder();
+		if (seconds >= 600)
+			tSB.append(seconds/60).append(":");
+		else
+			tSB.append("0").append(seconds/60).append(":");
+		
+		int reminder = seconds % 60;
+		if (reminder >= 10)
+			tSB.append(reminder);
+		else
+			tSB.append("0").append(reminder);
+		
+		TextView timerView = (TextView) getView().findViewById(R.id.player_time);
+		timerView.setText(tSB.toString());
+	}
 }
