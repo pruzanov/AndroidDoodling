@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +24,16 @@ public class MatchGameFragment extends Fragment {
 	private String name;
 	private Drawable faceThumbnail;
 	private String[] names;
+	private int score;
+	
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
 	// Supported game type
 	private int gameType;
 	private int rightAnswer;
@@ -45,11 +56,13 @@ public class MatchGameFragment extends Fragment {
 
 	// FaceMatchFragment version
 	public static MatchGameFragment instanceOf(Drawable[] faces, String name,
-			boolean timer, int rightIdx) {
+			boolean timer, int rightIdx, int score) {
 		MatchGameFragment fragment = new MatchGameFragment();
 		fragment.setFaceThumbnails(faces);
 		fragment.setName(name);
 		fragment.setRightAnswer(rightIdx);
+		fragment.setScore(score);
+		Log.d(FaceMatchActivity.TAG, "Score set to " + score);
 		if (timer) {
 			fragment.setGameType(FaceMatchActivity.FACE_MATCH_TIMED_GAME);
 		} else {
@@ -60,12 +73,14 @@ public class MatchGameFragment extends Fragment {
 
 	// NameMatchFragment version
 	public static MatchGameFragment instanceOf(Drawable face, String[] names,
-			int rightIdx) {
+			int rightIdx, int score) {
 		MatchGameFragment fragment = new MatchGameFragment();
 		fragment.setFaceThumbnail(face);
 		fragment.setOptions(names);
 		fragment.setGameType(FaceMatchActivity.NAME_MATCH_GAME);
 		fragment.setRightAnswer(rightIdx);
+		fragment.setScore(score);
+		Log.d(FaceMatchActivity.TAG, "Score set to " + score);
 		return fragment;
 	}
 
@@ -77,17 +92,26 @@ public class MatchGameFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		View fragmentView;
 		if (this.getGameType() == FaceMatchActivity.NAME_MATCH_GAME) {
-			return onCreateNameMatchView(inflater, container,
-					savedInstanceState);
+			fragmentView =  onCreateNameMatchView(inflater, container,
+					        savedInstanceState);
 		} else if (this.getGameType() == FaceMatchActivity.FACE_MATCH_GAME) {
-			return onCreateFaceMatchView(inflater, container,
-					savedInstanceState);
+			fragmentView =  onCreateFaceMatchView(inflater, container,
+					        savedInstanceState);
 		} else if (this.getGameType() == FaceMatchActivity.FACE_MATCH_TIMED_GAME) {
-			return onCreateFaceMatchView(inflater, container,
-					savedInstanceState);
+			fragmentView =  onCreateFaceMatchView(inflater, container,
+					        savedInstanceState);
+			fragmentView.findViewById(R.id.player_time).setVisibility(View.VISIBLE);
+		} else {
+			return null;
 		}
-		return null;
+		
+		TextView scoreTView = (TextView) fragmentView.findViewById(R.id.player_score);
+		String currentScore = container.getResources().getString(R.string.score_string) 
+				            + this.getScore();
+		scoreTView.setText(currentScore);
+		return fragmentView;
 	}
 
 	/*

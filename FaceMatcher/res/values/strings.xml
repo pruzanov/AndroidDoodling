@@ -18,5 +18,7 @@
     <string name="cancel">Cancel</string>
     <string name="game_close_warning">This will abort the game, proceed?</string>
     <string name="show_score_warning">Game Over</string>
+    <string name="about_string">About Face Matcher:</string>
+    <string name="about_text">Face Matcher is a game made using data from Staff Photo page. Try to match face to the name and see how well you remember the names of your colleagues </string>
 
 </resources>
