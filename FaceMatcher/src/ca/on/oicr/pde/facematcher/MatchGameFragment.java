@@ -2,8 +2,13 @@ package ca.on.oicr.pde.facematcher;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,7 +21,12 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 public class MatchGameFragment extends Fragment {
+	
+	private final TimerUpdateReceiver timerUpdateReceiver = new TimerUpdateReceiver();
+	static final String TIMERCHANGE_INTENT = "ca.on.oicr.pde.facematcher.timerChanged";
 	private static final int MAX_TIME = 600;
+	private static final int REGISTER_RECEIVER = 1;
+	private static final int UNREGISTER_RECEIVER = 2;
 	private static final int[] image_ids = { R.id.face_thumbnail_1,	R.id.face_thumbnail_2,
 		                                     R.id.face_thumbnail_3, R.id.face_thumbnail_4 };
 	OnAnswerSelectedListener mCallback;
@@ -88,6 +98,44 @@ public class MatchGameFragment extends Fragment {
 	public interface OnAnswerSelectedListener {
 		public void onAnswerSelected(int option);
 	}
+	
+	// Receiver registration
+	public void registerReceiver(int FLAG) {
+		// Do not do anything if we are not running timed game
+		if (this.gameType != FaceMatchActivity.FACE_MATCH_TIMED_GAME)
+			return;
+		
+		LocalBroadcastManager lmb = LocalBroadcastManager.getInstance(this.getActivity());
+		
+		switch (FLAG) {
+		case REGISTER_RECEIVER:
+		  IntentFilter timechangeFilter = new IntentFilter(TIMERCHANGE_INTENT);
+		  lmb.registerReceiver(timerUpdateReceiver, timechangeFilter);
+		break;
+		case UNREGISTER_RECEIVER:
+			lmb.unregisterReceiver(timerUpdateReceiver);
+		break;
+		default:
+		break;
+		};
+		
+	}
+	
+	//Register receiver on Resume
+	@Override
+	public void onResume() {
+		super.onResume();
+		this.registerReceiver(REGISTER_RECEIVER);
+	};
+	
+	// Unregister receiver on Destroy
+	@Override
+	public void onPause() {
+		this.registerReceiver(UNREGISTER_RECEIVER);
+		super.onPause();
+	}
+	
+	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -266,8 +314,11 @@ public class MatchGameFragment extends Fragment {
 	
 	public void updateTimer (int seconds) {
 		// Forbid time of more than MAX_TIME:
-		if (seconds > MAX_TIME)
+		if (seconds > MAX_TIME) {
 			seconds = MAX_TIME;
+		} else if (seconds < 0) {
+			seconds = 0;
+		}
 		
 		StringBuilder tSB = new StringBuilder();
 		if (seconds >= 600)
@@ -283,5 +334,20 @@ public class MatchGameFragment extends Fragment {
 		
 		TextView timerView = (TextView) getView().findViewById(R.id.player_time);
 		timerView.setText(tSB.toString());
+		timerView.invalidate();
+	}
+	
+	class TimerUpdateReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int seconds = intent.getExtras().getInt("timer");
+			//Log.d(FaceMatchActivity.TAG, "Received " + seconds + " seconds in update");
+			try {
+				MatchGameFragment.this.updateTimer(seconds);
+			} catch (NullPointerException np) {
+				Log.e(FaceMatchActivity.TAG, "Failed to updated Player's Timer");
+			}
+		}
 	}
 }

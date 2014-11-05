@@ -5,13 +5,17 @@ import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import ca.on.oicr.pde.facematcher.util.SystemUiHider;
 
 /**
@@ -26,11 +30,11 @@ public class FaceMatchActivity extends Activity implements
 
 	// Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
-	protected static final int QUIZES_COUNT = 5;
+	protected static final int QUIZES_COUNT  = 5;
 	protected static final String TAG = "FaceMatcher";
 	// Supported Game types:
-	public static final int NAME_MATCH_GAME = 1;
-	public static final int FACE_MATCH_GAME = 2;
+	public static final int NAME_MATCH_GAME       = 1;
+	public static final int FACE_MATCH_GAME       = 2;
 	public static final int FACE_MATCH_TIMED_GAME = 3;
 	// Special bonus for speed
 	private static final int MAX_TIME_BONUS = 100;
@@ -79,9 +83,6 @@ public class FaceMatchActivity extends Activity implements
 		this.gameInProgress = 0;
 		this.timerCancelled = true;
 		Log.i(TAG, getClass().getSimpleName() + ":entered onCreate()");
-
-		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.main);
 
 		mFragmentManager = getFragmentManager();
@@ -142,15 +143,15 @@ public class FaceMatchActivity extends Activity implements
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
 							// User clicked OK button
-							Log.d(TAG, "User Chose to close, exiting game");
+							Log.d(TAG, "User chose to close, exiting...");
 							FaceMatchActivity.this.goToTopMenu();
 						}
 					});
 			builder.setNegativeButton(R.string.cancel,
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
-							Log.d(TAG,
-									"User Chose to cancel exit, returning to game");
+							// User clicked Cancel button
+							Log.d(TAG, "User chose to stay, returning...");
 							return;
 						}
 					});
@@ -164,7 +165,7 @@ public class FaceMatchActivity extends Activity implements
 	}
 
 	private void goToTopMenu() {
-		final TopMenuFragment topFragment = new TopMenuFragment();
+		//final TopMenuFragment topFragment = new TopMenuFragment();
 		Handler fragSwapper = new Handler();
 		fragSwapper.postDelayed(new Runnable() {
 			@Override
@@ -174,10 +175,11 @@ public class FaceMatchActivity extends Activity implements
 				fragmentTransaction.setCustomAnimations(R.animator.fade_in,
 						R.animator.fade_out);
 				fragmentTransaction.replace(R.id.ui_fragment_container,
-						topFragment);
+						new TopMenuFragment());
 				fragmentTransaction.commit();
 			}
 		}, 1000L);
+		this.timerCancelled = true;
 		this.gameInProgress = 0;
 	}
 
@@ -186,9 +188,9 @@ public class FaceMatchActivity extends Activity implements
 	 */
 	protected void addGameData(OicrPerson[] data) {
 		this.mGame = new MatchGame(data);
-		// TODO show dialog, dismiss on load
+		// TODO show alert, dismiss on load
 		try {
-			Thread.sleep(300);
+			Thread.sleep(100); // Remove this if decide to go without dialog implementation in the final version
 		} catch (InterruptedException IE) {
 			Log.e(TAG, "Data producing thread was interrupted");
 		}
@@ -251,8 +253,6 @@ public class FaceMatchActivity extends Activity implements
 	}
 
 	public void onRadioButtonClicked(View v) {
-		// Is the button now checked?
-		Log.d(TAG, "Radio button clicked in FaceMatchActivity!");
 		boolean checked = ((RadioButton) v).isChecked();
 		int index = 0;
 		// Check which radio button was clicked
@@ -260,22 +260,22 @@ public class FaceMatchActivity extends Activity implements
 		case R.id.name_option_1:
 			if (checked)
 				index = 0;
-			Log.d(FaceMatchActivity.TAG, "Selected Option 1");
+			//Log.d(FaceMatchActivity.TAG, "Selected Option 1");
 			break;
 		case R.id.name_option_2:
 			if (checked)
 				index = 1;
-			Log.d(FaceMatchActivity.TAG, "Selected Option 2");
+			//Log.d(FaceMatchActivity.TAG, "Selected Option 2");
 			break;
 		case R.id.name_option_3:
 			if (checked)
 				index = 2;
-			Log.d(FaceMatchActivity.TAG, "Selected Option 3");
+			//Log.d(FaceMatchActivity.TAG, "Selected Option 3");
 			break;
 		case R.id.name_option_4:
 			if (checked)
 				index = 3;
-			Log.d(FaceMatchActivity.TAG, "Selected Option 4");
+			//Log.d(FaceMatchActivity.TAG, "Selected Option 4");
 			break;
 		}
 
@@ -326,9 +326,9 @@ public class FaceMatchActivity extends Activity implements
 		if (type != FACE_MATCH_TIMED_GAME
 				&& this.gameFragmentCounter >= QUIZES_COUNT) {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(500);
 			} catch (InterruptedException ie) {
-				Log.d(TAG, "Interrupted");
+				Log.e(TAG, "Interrupted");
 			}
 			this.finishGame();
 			return;
@@ -339,16 +339,17 @@ public class FaceMatchActivity extends Activity implements
 	}
 
 	private void finishGame() {
-		Log.d(TAG, "Finishing game, would show score");
+
 		this.timerCancelled = true;
 		this.gameInProgress = 0;
 		String scoreMessage = "Your Score: "
 				+ (this.currentScore + this.timeBonus);
 		// SHOW SCORE
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setIcon(R.drawable.ic_action_warning);
-		builder.setTitle(R.string.show_score_warning);
-		builder.setMessage(scoreMessage);
+		View dialogView = this.getLayoutInflater().inflate(R.layout.complete_dialog, null);
+		TextView scoreView = (TextView) dialogView.findViewById(R.id.gameover_text);
+		scoreView.setText(scoreMessage);
+		builder.setView(dialogView);	
 		builder.setPositiveButton(R.string.ok,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
@@ -439,6 +440,10 @@ public class FaceMatchActivity extends Activity implements
 	 * 
 	 * private void showLeaderboard () { // TODO }
 	 */
+	
+	/*
+	 * TimerTask takes care of timed game and timer update in timed Face Matching Game
+	 */
 	class TimerTask extends AsyncTask<Integer, Integer, Void> {
 
 		@Override
@@ -454,9 +459,13 @@ public class FaceMatchActivity extends Activity implements
 			FaceMatchActivity.this.timeBonus = values[0];
 			if (FaceMatchActivity.this.timeBonus < 0)
 				FaceMatchActivity.this.timeBonus = 0;
-			Log.d(TAG, "Current Time bonus: "
-					+ FaceMatchActivity.this.timeBonus);
-			Log.d(TAG, "Current Timer secs: " + values[1]);
+			//Log.d(TAG, "Current Time bonus: " + FaceMatchActivity.this.timeBonus);
+			//Log.d(TAG, "Current Timer secs: " + values[1]);
+			if (FaceMatchActivity.this.gameInProgress == FACE_MATCH_TIMED_GAME && values[1] > 0) {
+				Intent intent = new Intent(MatchGameFragment.TIMERCHANGE_INTENT);
+				intent.putExtra("timer", values[1]);
+				LocalBroadcastManager.getInstance(FaceMatchActivity.this).sendBroadcast(intent);
+			}
 		}
 
 		@Override
@@ -466,7 +475,7 @@ public class FaceMatchActivity extends Activity implements
 				if (FaceMatchActivity.this.timerCancelled)
 					break;
 				try {
-					Thread.sleep(1000L);
+					Thread.sleep(1000L); // one second tick
 				} catch (InterruptedException ie) {
 					Log.d(TAG, "Timer Thread was interupted");
 				}
@@ -482,11 +491,12 @@ public class FaceMatchActivity extends Activity implements
 
 	}
 
+	/*
+	 * This is to show a simple 'About' dialog
+	 */
 	public void showAboutDialog() {
-		// SHOW SCORE
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.about_string);
-		builder.setMessage(R.string.about_text);
+		builder.setView(this.getLayoutInflater().inflate(R.layout.about_dialog, null));
 		builder.setPositiveButton(R.string.ok,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
@@ -497,5 +507,9 @@ public class FaceMatchActivity extends Activity implements
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
+	
+	/*
+	 * TODO Settings
+	 */
 
 }
