@@ -1,5 +1,6 @@
 package ca.on.oicr.pde.facematcher;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
@@ -10,9 +11,9 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -24,13 +25,16 @@ import ca.on.oicr.pde.facematcher.util.SystemUiHider;
  * 
  * @see SystemUiHider
  */
+@SuppressLint("InflateParams")
 public class FaceMatchActivity extends Activity implements
 		TopMenuFragment.OnOptionSelectedListener,
-		MatchGameFragment.OnAnswerSelectedListener {
+		MatchGameFragment.OnAnswerSelectedListener,
+		ConfigureDialogFragment.ConfigureDialogListener{
 
 	// Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
 	protected static final int QUIZES_COUNT  = 5;
+	private static final int SETTINGS_REQUEST_CODE = 33;
 	protected static final String TAG = "FaceMatcher";
 	// Supported Game types:
 	public static final int NAME_MATCH_GAME       = 1;
@@ -212,6 +216,8 @@ public class FaceMatchActivity extends Activity implements
 			// set options (in a dialog?) TODO: consider setting user
 			// credentials via options menu
 			Log.d(TAG, "Would Have Open Settings Dialog");
+			ConfigureDialogFragment confFragment = new ConfigureDialogFragment();
+		    confFragment.show(getFragmentManager(), "config");
 			break;
 		case TopMenuFragment.SHOW_LEADERS:
 			// TODO launch Leaderboard viewing activity:
@@ -494,6 +500,7 @@ public class FaceMatchActivity extends Activity implements
 	/*
 	 * This is to show a simple 'About' dialog
 	 */
+	@SuppressLint("InflateParams")
 	public void showAboutDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setView(this.getLayoutInflater().inflate(R.layout.about_dialog, null));
@@ -507,9 +514,22 @@ public class FaceMatchActivity extends Activity implements
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
+
 	
 	/*
 	 * TODO Settings
 	 */
+
+	@Override
+	public void onDialogPositiveClick(DialogFragment dialog) {
+		// TODO Handle Settings
+		Log.d(TAG, "Received data from Configuration Dialog");
+		boolean soundsOn = dialog.getArguments().getBoolean("sounds");
+		String on = soundsOn ? "Sounds On" : "Sounds Off";
+		Log.d(TAG, on);
+				
+	}
+	
+	
 
 }
