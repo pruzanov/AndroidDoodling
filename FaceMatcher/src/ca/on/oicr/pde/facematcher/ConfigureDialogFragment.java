@@ -6,24 +6,35 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.CheckBox;
+import android.widget.EditText;
 
 public class ConfigureDialogFragment extends DialogFragment {
-	public boolean soundsEnabled;
 	
-	@Override
-	public void onDismiss(DialogInterface dialog) {
-		// TODO Auto-generated method stub
-		super.onDismiss(dialog);
+	private boolean soundsEnabled;
+	private String userName;
+	
+	public boolean isSoundsEnabled() {
+		return soundsEnabled;
 	}
 
-
+	public String getUserName() {
+		return userName;
+	}
+	
 	// Use this instance of the interface to deliver action events
     ConfigureDialogListener mListener;
     
 	public interface ConfigureDialogListener {
-		public void onDialogPositiveClick(DialogFragment dialog);
+		public void onDialogPositiveClick(ConfigureDialogFragment dialog);
 	}
 	
 	
@@ -33,13 +44,44 @@ public class ConfigureDialogFragment extends DialogFragment {
         // Build the dialog and set up the button click handlers
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		LayoutInflater inflater = getActivity().getLayoutInflater();
-	    builder.setView(inflater.inflate(R.layout.configure_dialog, null))
+		View rootView = inflater.inflate(R.layout.configure_dialog, null);  	
+    	SharedPreferences sp = getActivity().getSharedPreferences("game_config", Activity.MODE_PRIVATE);
+    	
+	    builder.setView(rootView)
                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
-                       // Send the positive button event back to the host activity
                        mListener.onDialogPositiveClick(ConfigureDialogFragment.this);
                    }
                });
+	    CheckBox cb = (CheckBox) rootView.findViewById(R.id.volume_toggle);
+	    cb.setChecked(sp.getBoolean("soundsOn", true));
+	    cb.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				CheckBox cbox = (CheckBox) v;
+				Log.d(FaceMatchActivity.TAG, "Checkbox clicked!");
+				soundsEnabled = cbox.isChecked();
+				
+			}});
+    	EditText un = (EditText) rootView.findViewById(R.id.user_name);
+    	un.setText(sp.getString("userName", ""));
+    	userName = un.getText().toString();
+    	un.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				userName = s.toString();
+				
+			}});
         return builder.create();
     }
 
@@ -47,16 +89,13 @@ public class ConfigureDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        // Verify that the host activity implements the callback interface
+
         try {
-            // Instantiate the NoticeDialogListener so we can send events to the host
             mListener = (ConfigureDialogListener) activity;
         } catch (ClassCastException e) {
-            // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(activity.toString()
                     + " must implement ConfigureDialogListener");
         }
     }
-
 
 }

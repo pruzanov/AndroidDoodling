@@ -7,11 +7,11 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
@@ -34,7 +34,6 @@ public class FaceMatchActivity extends Activity implements
 	// Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
 	protected static final int QUIZES_COUNT  = 5;
-	private static final int SETTINGS_REQUEST_CODE = 33;
 	protected static final String TAG = "FaceMatcher";
 	// Supported Game types:
 	public static final int NAME_MATCH_GAME       = 1;
@@ -52,6 +51,8 @@ public class FaceMatchActivity extends Activity implements
 	private int timeBonus;
 	private int gameFragmentCounter;
 	private boolean timerCancelled;
+	private boolean soundsOn;
+	private String userName;
 
 	/**
 	 * Whether or not the system UI should be auto-hidden after
@@ -98,6 +99,9 @@ public class FaceMatchActivity extends Activity implements
 
 		getActionBar().hide();
 		new DataLoaderTask(this).execute();
+		SharedPreferences sp = getSharedPreferences("game_config", MODE_PRIVATE);
+		this.soundsOn = sp.getBoolean("soundsOn", true);
+		this.userName = sp.getString("userName", "");
 		// final View controlsView =
 		// findViewById(R.id.fullscreen_content_controls);
 		// final View contentView = findViewById(R.id.fullscreen_content);
@@ -213,9 +217,6 @@ public class FaceMatchActivity extends Activity implements
 			this.showAboutDialog();
 			break;
 		case TopMenuFragment.SET_OPTIONS:
-			// set options (in a dialog?) TODO: consider setting user
-			// credentials via options menu
-			Log.d(TAG, "Would Have Open Settings Dialog");
 			ConfigureDialogFragment confFragment = new ConfigureDialogFragment();
 		    confFragment.show(getFragmentManager(), "config");
 			break;
@@ -517,16 +518,19 @@ public class FaceMatchActivity extends Activity implements
 
 	
 	/*
-	 * TODO Settings
+	 * Settings are recorded when an appropriate dialog closes
 	 */
 
 	@Override
-	public void onDialogPositiveClick(DialogFragment dialog) {
-		// TODO Handle Settings
+	public void onDialogPositiveClick(ConfigureDialogFragment dialog) {
 		Log.d(TAG, "Received data from Configuration Dialog");
-		boolean soundsOn = dialog.getArguments().getBoolean("sounds");
-		String on = soundsOn ? "Sounds On" : "Sounds Off";
-		Log.d(TAG, on);
+		
+		SharedPreferences sp = getSharedPreferences("game_config", MODE_PRIVATE);
+		this.soundsOn = dialog.isSoundsEnabled();
+		this.userName = dialog.getUserName();
+		Log.d(TAG, "Received data from Configuration Dialog, user is " + this.userName);
+		sp.edit().putBoolean("soundsOn", this.soundsOn)
+		         .putString("userName", this.userName).commit();
 				
 	}
 	
