@@ -166,6 +166,7 @@ public class FaceMatchActivity extends Activity implements
 	public void onBackPressed() {
 
 		if (this.gameInProgress > 0) {
+			//TODO pause timer! We don't need it to keep counting
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setIcon(R.drawable.ic_action_warning);
 			builder.setTitle(R.string.game_close_warning);

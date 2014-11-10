@@ -5,12 +5,12 @@
     <ImageView
         android:src="@drawable/banner_settings"
         android:background="@color/dialog_head"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="center"
         android:contentDescription="@string/image_type" />
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
         android:orientation="horizontal" >
