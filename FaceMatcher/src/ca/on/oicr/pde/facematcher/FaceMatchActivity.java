@@ -382,11 +382,12 @@ public class FaceMatchActivity extends Activity implements
 		TextView scoreView = (TextView) dialogView.findViewById(R.id.gameover_text);
 		scoreView.setText(scoreMessage);
 		// check if user name set, if yes, show Top score icon
+		ImageView topScore = (ImageView) dialogView.findViewById(R.id.topscore_icon);
 		if (!this.userName.isEmpty() && !this.userName.equals(DEFAULT_USER) 
 				&& this.addNewScores(TopScoreAdapter.SCORE_SET_PREFIX + this.gameInProgress)) {
-			ImageView topScore = (ImageView) dialogView.findViewById(R.id.topscore_icon);
-				topScore.setVisibility(ImageView.VISIBLE);
+			topScore.setVisibility(ImageView.VISIBLE);
 		} else { // if user name NOT set, show warning as toast message
+			topScore.setVisibility(ImageView.INVISIBLE);
 			Toast.makeText(FaceMatchActivity.this,
 					"Set User in Settings to enable Top Scores", Toast.LENGTH_LONG).show();		
 		}
@@ -591,7 +592,8 @@ public class FaceMatchActivity extends Activity implements
 		SharedPreferences sp = getSharedPreferences(GAME_PREFS, MODE_PRIVATE);
 		this.soundsOn = dialog.isSoundsEnabled();
 		this.userName = dialog.getUserName();
-		Log.d(TAG, "Received data from Configuration Dialog, user is " + this.userName);
+		String soundState = this.soundsOn ? "ON" : "OFF";
+		Log.d(TAG, "Received data from Configuration Dialog, user is " + this.userName + " sound is " + soundState);
 		sp.edit().putBoolean(GAME_SOUND, this.soundsOn)
 		         .putString(GAME_USER, this.userName).commit();
 				
@@ -650,8 +652,10 @@ public class FaceMatchActivity extends Activity implements
 			soundFile = R.raw.missedit;
 		}		
 		
-		if (null != this.mediaPlayer && this.mediaPlayer.isPlaying())
+		if (null != this.mediaPlayer && this.mediaPlayer.isPlaying()) {
 			this.mediaPlayer.stop();
+			this.mediaPlayer.release();
+		}
 
 		this.mediaPlayer = MediaPlayer.create(this, soundFile);
 		mediaPlayer.start(); // no need to call prepare(); create() does that for you

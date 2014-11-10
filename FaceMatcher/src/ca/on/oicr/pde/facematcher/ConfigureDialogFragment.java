@@ -55,6 +55,7 @@ public class ConfigureDialogFragment extends DialogFragment {
                });
 	    CheckBox cb = (CheckBox) rootView.findViewById(R.id.volume_toggle);
 	    cb.setChecked(sp.getBoolean(FaceMatchActivity.GAME_SOUND, true));
+	    this.soundsEnabled = cb.isChecked();
 	    cb.setOnClickListener(new OnClickListener(){
 
 			@Override
