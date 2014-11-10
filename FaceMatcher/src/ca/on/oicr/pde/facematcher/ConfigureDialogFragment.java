@@ -45,7 +45,7 @@ public class ConfigureDialogFragment extends DialogFragment {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		View rootView = inflater.inflate(R.layout.configure_dialog, null);  	
-    	SharedPreferences sp = getActivity().getSharedPreferences("game_config", Activity.MODE_PRIVATE);
+    	SharedPreferences sp = getActivity().getSharedPreferences(FaceMatchActivity.GAME_PREFS, Activity.MODE_PRIVATE);
     	
 	    builder.setView(rootView)
                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -54,18 +54,17 @@ public class ConfigureDialogFragment extends DialogFragment {
                    }
                });
 	    CheckBox cb = (CheckBox) rootView.findViewById(R.id.volume_toggle);
-	    cb.setChecked(sp.getBoolean("soundsOn", true));
+	    cb.setChecked(sp.getBoolean(FaceMatchActivity.GAME_SOUND, true));
 	    cb.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
-				CheckBox cbox = (CheckBox) v;
 				Log.d(FaceMatchActivity.TAG, "Checkbox clicked!");
-				soundsEnabled = cbox.isChecked();
+				soundsEnabled = soundsEnabled ? false : true;
 				
 			}});
     	EditText un = (EditText) rootView.findViewById(R.id.user_name);
-    	un.setText(sp.getString("userName", ""));
+    	un.setText(sp.getString(FaceMatchActivity.GAME_USER, FaceMatchActivity.DEFAULT_USER));
     	userName = un.getText().toString();
     	un.addTextChangedListener(new TextWatcher() {
 

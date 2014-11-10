@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -194,8 +196,8 @@ public class MatchGameFragment extends Fragment {
 						break;
 					default:
 						break;
-					}
-					;
+					};
+				
 					mCallback.onAnswerSelected(option);
 					return v.performClick();
 				}

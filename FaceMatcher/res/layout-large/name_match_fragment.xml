@@ -1,0 +1,109 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/name_match_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/game_feedbacks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|fill_horizontal"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/player_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/score_string"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/banner_name_match"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:scaleType="fitXY"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginBottom="15dp"
+        android:contentDescription="@string/image_type"
+        android:background="#FF99CC"
+        android:src="@drawable/banner_game01" />
+
+    <ImageView
+        android:id="@+id/face_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/image_type"
+        android:src="@drawable/deniro" />
+    
+    <ImageView
+        android:id="@+id/answer_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:scaleType="fitXY"
+        android:layout_gravity="start"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"
+        android:contentDescription="@string/image_type"
+        android:src="@drawable/msg_answer" />
+
+    <RadioGroup
+        android:id="@+id/name_options"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_weight="1" >
+
+        <RadioButton
+            android:id="@+id/name_option_1"
+            android:layout_width="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="14dp"
+            android:onClick="onRadioButtonClicked"
+            android:text="Dmitri Mendeleev"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:background="@color/neutral_answer" />
+
+        <RadioButton
+            android:id="@+id/name_option_2"
+            android:layout_width="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="14dp"
+            android:onClick="onRadioButtonClicked"
+            android:text="Jonas Salk"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:background="@color/neutral_answer" />
+
+        <RadioButton
+            android:id="@+id/name_option_3"
+            android:layout_width="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="14dp"
+            android:onClick="onRadioButtonClicked"
+            android:text="John Carmack"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:background="@color/neutral_answer" />
+
+        <RadioButton
+            android:id="@+id/name_option_4"
+            android:layout_width="match_parent"
+            android:layout_gravity="center_vertical"
+            android:onClick="onRadioButtonClicked"
+            android:text="Robert De Niro"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:background="@color/neutral_answer" />
+    </RadioGroup>
+
+</LinearLayout>

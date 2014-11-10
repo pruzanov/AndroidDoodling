@@ -1,22 +1,35 @@
 package ca.on.oicr.pde.facematcher;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import ca.on.oicr.pde.facematcher.util.SystemUiHider;
 
 /**
@@ -29,7 +42,8 @@ import ca.on.oicr.pde.facematcher.util.SystemUiHider;
 public class FaceMatchActivity extends Activity implements
 		TopMenuFragment.OnOptionSelectedListener,
 		MatchGameFragment.OnAnswerSelectedListener,
-		ConfigureDialogFragment.ConfigureDialogListener{
+		ConfigureDialogFragment.ConfigureDialogListener,
+		ScoreFragment.OnBannerClickListener {
 
 	// Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
@@ -43,7 +57,14 @@ public class FaceMatchActivity extends Activity implements
 	private static final int MAX_TIME_BONUS = 100;
 	private static final int GUESSED_RIGHT_SCORE = 15;
 	private static final int GAME_SPAN = 120;
-
+	//SharedPreferences
+	public static final String GAME_PREFS = "game_config";
+	public static final String GAME_USER  = "user_name";
+	public static final String GAME_SOUND = "soundsOn";
+	public static final String DEFAULT_USER = "anonymous";
+	public static final int KEPT_SCORES = 10;
+	private final Comparator<Score> SCORECOMPARATOR = new ScoreComparator();
+	
 	private FragmentManager mFragmentManager;
 	private MatchGame mGame;
 	private int gameInProgress;
@@ -53,7 +74,8 @@ public class FaceMatchActivity extends Activity implements
 	private boolean timerCancelled;
 	private boolean soundsOn;
 	private String userName;
-
+	private MediaPlayer mediaPlayer;
+	
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -99,9 +121,9 @@ public class FaceMatchActivity extends Activity implements
 
 		getActionBar().hide();
 		new DataLoaderTask(this).execute();
-		SharedPreferences sp = getSharedPreferences("game_config", MODE_PRIVATE);
-		this.soundsOn = sp.getBoolean("soundsOn", true);
-		this.userName = sp.getString("userName", "");
+		SharedPreferences sp = getSharedPreferences(GAME_PREFS, MODE_PRIVATE);
+		this.soundsOn = sp.getBoolean(GAME_SOUND, true);
+		this.userName = sp.getString(GAME_USER, DEFAULT_USER);
 		// final View controlsView =
 		// findViewById(R.id.fullscreen_content_controls);
 		// final View contentView = findViewById(R.id.fullscreen_content);
@@ -173,7 +195,7 @@ public class FaceMatchActivity extends Activity implements
 	}
 
 	private void goToTopMenu() {
-		//final TopMenuFragment topFragment = new TopMenuFragment();
+
 		Handler fragSwapper = new Handler();
 		fragSwapper.postDelayed(new Runnable() {
 			@Override
@@ -221,8 +243,8 @@ public class FaceMatchActivity extends Activity implements
 		    confFragment.show(getFragmentManager(), "config");
 			break;
 		case TopMenuFragment.SHOW_LEADERS:
-			// TODO launch Leaderboard viewing activity:
-			Log.d(TAG, "Would Show LeaderBoard, if possible");
+			Log.d(TAG, "Showing LeaderBoard");
+			this.showLeaderboard();
 			break;
 		case TopMenuFragment.NAME_MATCH:
 			Log.d(TAG, "Starting NameMatching Game");
@@ -241,8 +263,7 @@ public class FaceMatchActivity extends Activity implements
 			break;
 		default:
 			break;
-		}
-		;
+		};
 	}
 
 	/*
@@ -254,8 +275,10 @@ public class FaceMatchActivity extends Activity implements
 	 */
 	@Override
 	public void onAnswerSelected(int index) {
-		Log.d(TAG, "Would handle face thumb with array index " + index
-				+ " in Face Matching Game");
+		//Sounds
+		if (this.soundsOn)
+			playFeedbackTone(index);
+				
 		this.updateGame(this.gameInProgress, index);
 	}
 
@@ -285,6 +308,9 @@ public class FaceMatchActivity extends Activity implements
 			//Log.d(FaceMatchActivity.TAG, "Selected Option 4");
 			break;
 		}
+		//Sounds
+		if (this.soundsOn)
+			playFeedbackTone(index);
 
 		this.updateGame(this.gameInProgress, index);
 
@@ -346,21 +372,34 @@ public class FaceMatchActivity extends Activity implements
 	}
 
 	private void finishGame() {
-
-		this.timerCancelled = true;
-		this.gameInProgress = 0;
-		String scoreMessage = "Your Score: "
-				+ (this.currentScore + this.timeBonus);
-		// SHOW SCORE
+		
+		this.currentScore += this.timeBonus;
+		String scoreMessage = "Your Score: " + this.currentScore;
+		// SHOW SCORE TODO - if score makes it to the top, notify player
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		View dialogView = this.getLayoutInflater().inflate(R.layout.complete_dialog, null);
 		TextView scoreView = (TextView) dialogView.findViewById(R.id.gameover_text);
 		scoreView.setText(scoreMessage);
+		// check if user name set, if yes, show Top score icon
+		if (!this.userName.isEmpty() && !this.userName.equals(DEFAULT_USER) 
+				&& this.addNewScores(TopScoreAdapter.SCORE_SET_PREFIX + this.gameInProgress)) {
+			ImageView topScore = (ImageView) dialogView.findViewById(R.id.topscore_icon);
+				topScore.setVisibility(ImageView.VISIBLE);
+		} else { // if user name NOT set, show warning as toast message
+			Toast.makeText(FaceMatchActivity.this,
+					"Set User in Settings to enable Top Scores", Toast.LENGTH_LONG).show();		
+		}
+		this.timerCancelled = true;
+		this.gameInProgress = 0;
+		
+			
 		builder.setView(dialogView);	
 		builder.setPositiveButton(R.string.ok,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						FaceMatchActivity.this.goToTopMenu();
+						// If user name is not set record it here and check
+						// for top score. If new top score, show toast
 					}
 				});
 
@@ -394,6 +433,9 @@ public class FaceMatchActivity extends Activity implements
 		}
 	}
 
+	/*
+	 * Function for replacing fragments during a game
+	 */
 	private void updateCurrentFragment(final MatchGameFragment nextFragment) {
 		Handler fragSwapper = new Handler();
 		fragSwapper.postDelayed(new Runnable() {
@@ -405,6 +447,26 @@ public class FaceMatchActivity extends Activity implements
 						R.animator.fade_out);
 				fragmentTransaction.replace(R.id.ui_fragment_container,
 						nextFragment, "CURRENT");
+				fragmentTransaction.commit();
+			}
+		}, 1000L);
+	}
+	
+	/*
+	 * Function that initialises and shows leaderboard (scores) fragment
+	 */
+	private void showLeaderboard() {
+		Handler fragSwapper = new Handler();
+		fragSwapper.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				final FragmentTransaction fragmentTransaction = mFragmentManager
+						.beginTransaction()
+						.setCustomAnimations(R.animator.fade_in,
+						                     R.animator.fade_out)
+						.addToBackStack("ShowScores")
+						.replace(R.id.ui_fragment_container,
+						new ScoresContainerFragment(), "SCORES");
 				fragmentTransaction.commit();
 			}
 		}, 1000L);
@@ -525,14 +587,84 @@ public class FaceMatchActivity extends Activity implements
 	public void onDialogPositiveClick(ConfigureDialogFragment dialog) {
 		Log.d(TAG, "Received data from Configuration Dialog");
 		
-		SharedPreferences sp = getSharedPreferences("game_config", MODE_PRIVATE);
+		SharedPreferences sp = getSharedPreferences(GAME_PREFS, MODE_PRIVATE);
 		this.soundsOn = dialog.isSoundsEnabled();
 		this.userName = dialog.getUserName();
 		Log.d(TAG, "Received data from Configuration Dialog, user is " + this.userName);
-		sp.edit().putBoolean("soundsOn", this.soundsOn)
-		         .putString("userName", this.userName).commit();
+		sp.edit().putBoolean(GAME_SOUND, this.soundsOn)
+		         .putString(GAME_USER, this.userName).commit();
 				
 	}
+
+	@Override
+	public void onBannerClicked(int option) {
+		ScoresContainerFragment scoreBox = (ScoresContainerFragment) getFragmentManager().findFragmentByTag("SCORES");
+		Log.d(TAG, "Invalidating score fragment's view");
+		scoreBox.showCurrentTypeScores();
+		
+	}
+	
+	private boolean addNewScores(String gameTypeKey) {
+		
+		boolean newTopScore = true;
+		
+		if (null == this.userName && this.userName.isEmpty())
+			return false;
+		
+		SharedPreferences sp = getSharedPreferences(GAME_PREFS, 
+				                                    Context.MODE_PRIVATE);
+		Set<String> scoreSet = new HashSet<String>();
+		Set<String> tokenizedScores = sp.getStringSet(gameTypeKey, new HashSet<String>());
+		
+		ArrayList<Score> storedScores = new ArrayList<Score>();
+		for (String s : tokenizedScores) {
+			Score nextScore =  new Score(s, TopScoreAdapter.delimiter);
+			if (nextScore.getScore() > this.currentScore)
+				newTopScore = false;
+			storedScores.add(nextScore);
+		}
+		storedScores.add(new Score(this.userName, this.currentScore));
+		Collections.sort(storedScores, SCORECOMPARATOR);
+		
+		for (Score score : storedScores) {
+			scoreSet.add(score.toString());
+			if (scoreSet.size() >= KEPT_SCORES)
+				break;
+		}
+		
+		sp.edit().putStringSet(gameTypeKey, scoreSet).commit();
+        return newTopScore;
+	}
+	
+	/*
+	 * Ringtone playing
+	 */
+	private void playFeedbackTone(int answer) {
+
+		int soundFile;
+		
+		if (this.mGame.getCurrentRightAnswer() == answer) {
+			soundFile = R.raw.confirm;
+		} else {
+			soundFile = R.raw.missedit;
+		}		
+		
+		if (null != this.mediaPlayer && this.mediaPlayer.isPlaying())
+			this.mediaPlayer.stop();
+
+		this.mediaPlayer = MediaPlayer.create(this, soundFile);
+		mediaPlayer.start(); // no need to call prepare(); create() does that for you
+	}
+	
+	/*
+	 * Comparator
+	 */
+	private class ScoreComparator implements Comparator<Score> {
+		public int compare(Score score1, Score score2) {
+			return Integer.valueOf(score2.getScore()).compareTo(
+				   Integer.valueOf(score1.getScore()));
+		}
+	};
 	
 	
 

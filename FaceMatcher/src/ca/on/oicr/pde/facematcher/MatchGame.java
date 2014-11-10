@@ -14,6 +14,15 @@ public class MatchGame {
 	private Integer[] randomizedIndexes;
 	private int cursor;
 	private int counter;
+	private int currentRightAnswer;
+
+	public int getCurrentRightAnswer() {
+		return currentRightAnswer;
+	}
+
+	private void setCurrentRightAnswer(int currentRightAnswer) {
+		this.currentRightAnswer = currentRightAnswer;
+	}
 
 	public MatchGame(OicrPerson[] data) {
 		this.gameData = data;
@@ -65,6 +74,7 @@ public class MatchGame {
 			this.peopleNames = new String[FaceMatchActivity.OPTIONS_COUNT];
 			this.URLs = new String[FaceMatchActivity.OPTIONS_COUNT];
 			this.indexMe = r.nextInt(FaceMatchActivity.OPTIONS_COUNT);
+			MatchGame.this.setCurrentRightAnswer(indexMe);
 			if (MatchGame.this.cursor + FaceMatchActivity.OPTIONS_COUNT > MatchGame.this.randomizedIndexes.length)
 				MatchGame.this.setup();
 

@@ -5,5 +5,9 @@
     <color name="right_answer">#99CC00</color>
     <color name="neutral_answer">#336666</color>
     <color name="dialog_head">#66CC66</color>
+    <color name="empty_score">#CCC</color>
+    <color name="game2_color">#99cc00</color>
+    <color name="game1_color">#ff99cc</color>
+    <color name="game3_color">#6699ff</color>
 
 </resources>
