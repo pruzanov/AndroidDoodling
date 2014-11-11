@@ -18,6 +18,12 @@ public class ScoreFragment extends Fragment {
 	private int rowsToShow;
 	public static final int MIN_ROWS = 4;
 	public static final int MAX_ROWS = 9;
+
+	// Getters and Setters
+	private int getRowsToShow() {
+		return rowsToShow;
+	}
+
 	public int getGameType() {
 		return gameType;
 	}
@@ -28,75 +34,77 @@ public class ScoreFragment extends Fragment {
 
 	// Container Activity must implement this interface
 	public interface OnBannerClickListener {
-			public void onBannerClicked(int option);
+		public void onBannerClicked(int option);
 	}
-	
+
 	private TopScoreAdapter mAdapter;
-	
+
 	// FaceMatchFragment version
-		public static ScoreFragment instanceOf(int type, int rows) {
-			ScoreFragment fragment = new ScoreFragment();
-			fragment.setGameType(type);
-			fragment.setRows(rows);
-			return fragment;
-		}
-	
+	public static ScoreFragment instanceOf(int type, int rows) {
+		ScoreFragment fragment = new ScoreFragment();
+		fragment.setGameType(type);
+		fragment.setRows(rows);
+		return fragment;
+	}
+
 	// Set number of rows shown in list view of ScoreFragments
 	private void setRows(int rows) {
-			if (rows < MIN_ROWS)
-				this.rowsToShow = MIN_ROWS;
-			else if (rows > MAX_ROWS)
-				this.rowsToShow = MAX_ROWS;
-			else
-			    this.rowsToShow = rows;	
-		}
+		if (rows < MIN_ROWS)
+			this.rowsToShow = MIN_ROWS;
+		else if (rows > MAX_ROWS)
+			this.rowsToShow = MAX_ROWS;
+		else
+			this.rowsToShow = rows;
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
-		View rootView = inflater.inflate(R.layout.score_fragment,
-				container, false);
-		//Configure banner
+
+		View rootView = inflater.inflate(R.layout.score_fragment, container,
+				false);
+		// Configure banner
 		ImageView banner = (ImageView) rootView.findViewById(R.id.banner_score);
 
-		switch  (this.getGameType()) {
+		switch (this.getGameType()) {
 		case FaceMatchActivity.NAME_MATCH_GAME:
 			banner.setImageResource(R.drawable.banner_game01);
 			banner.setBackgroundResource(R.color.game1_color);
-		break;
+			break;
 		case FaceMatchActivity.FACE_MATCH_GAME:
 			banner.setImageResource(R.drawable.banner_game02);
 			banner.setBackgroundResource(R.color.game2_color);
-		break;
+			break;
 		case FaceMatchActivity.FACE_MATCH_TIMED_GAME:
 			banner.setImageResource(R.drawable.banner_game03);
 			banner.setBackgroundResource(R.color.game3_color);
-		break;
+			break;
 		default:
-		break;};
+			break;
+		};
 		
-		banner.setOnTouchListener(new OnTouchListener(){
+		if (this.getRowsToShow() == MAX_ROWS) {
+			banner.setOnTouchListener(new OnTouchListener() {
 
 				@Override
 				public boolean onTouch(View v, MotionEvent event) {
-					Log.d(FaceMatchActivity.TAG, "banner touched, id is " + gameType);
+					Log.d(FaceMatchActivity.TAG, "banner touched, id is "
+							+ gameType);
 					mCallback.onBannerClicked(gameType);
 					return v.performClick();
 				}
-		});
+			});
+		}
 		// Configure list view with scores
 		ListView listView = (ListView) rootView.findViewById(R.id.score_list);
 		this.mAdapter = new TopScoreAdapter(container.getContext(),
-				                            R.layout.score, 
-				                            this.getGameType(),
-				                            this.rowsToShow);
+				R.layout.score, this.getGameType(), this.rowsToShow);
 		this.mAdapter.setNotifyOnChange(true);
-		listView.setAdapter(this.mAdapter);	
-		
+		listView.setAdapter(this.mAdapter);
+
 		return rootView;
 	}
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -110,7 +118,6 @@ public class ScoreFragment extends Fragment {
 		}
 	}
 
-	
-	//TODO implement score-recording functionality
-	
+	// TODO implement score-recording functionality
+
 }
