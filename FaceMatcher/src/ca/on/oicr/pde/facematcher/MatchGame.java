@@ -78,11 +78,10 @@ public class MatchGame {
 			if (MatchGame.this.cursor + FaceMatchActivity.OPTIONS_COUNT > MatchGame.this.randomizedIndexes.length)
 				MatchGame.this.setup();
 
-			for (int c = MatchGame.this.cursor; c < MatchGame.this.cursor
-					+ FaceMatchActivity.OPTIONS_COUNT; c++) {
-				this.peopleNames[c] = gameData[MatchGame.this.randomizedIndexes[c]]
+			for (int c = 0; c < FaceMatchActivity.OPTIONS_COUNT; c++) {
+				this.peopleNames[c] = gameData[MatchGame.this.randomizedIndexes[c + MatchGame.this.cursor]]
 						.getName();
-				this.URLs[c] = gameData[MatchGame.this.randomizedIndexes[c]]
+				this.URLs[c] = gameData[MatchGame.this.randomizedIndexes[c + MatchGame.this.cursor]]
 						.getImageURL();
 			}
 			MatchGame.this.cursor += FaceMatchActivity.OPTIONS_COUNT;
