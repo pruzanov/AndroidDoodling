@@ -188,6 +188,8 @@ public class FaceMatchActivity extends Activity implements
 					});
 
 			AlertDialog dialog = builder.create();
+			if (this.soundsOn)
+				this.playFeedbackTone(R.raw.reminder);
 			dialog.show();
 
 		} else {
@@ -277,8 +279,13 @@ public class FaceMatchActivity extends Activity implements
 	@Override
 	public void onAnswerSelected(int index) {
 		//Sounds
-		if (this.soundsOn)
-			playFeedbackTone(index);
+		if (this.soundsOn) {
+			if (this.mGame.getCurrentRightAnswer() == index) {
+				playFeedbackTone(R.raw.confirm);
+			} else {
+				playFeedbackTone(R.raw.missedit);
+			}
+		}
 				
 		this.updateGame(this.gameInProgress, index);
 	}
@@ -310,8 +317,13 @@ public class FaceMatchActivity extends Activity implements
 			break;
 		}
 		//Sounds
-		if (this.soundsOn)
-			playFeedbackTone(index);
+		if (this.soundsOn) {
+			if (this.mGame.getCurrentRightAnswer() == index) {
+				playFeedbackTone(R.raw.confirm);
+			} else {
+				playFeedbackTone(R.raw.missedit);
+			}
+		}
 
 		this.updateGame(this.gameInProgress, index);
 
@@ -383,17 +395,23 @@ public class FaceMatchActivity extends Activity implements
 		scoreView.setText(scoreMessage);
 		// check if user name set, if yes, show Top score icon
 		ImageView topScore = (ImageView) dialogView.findViewById(R.id.topscore_icon);
+		int soundResource;
 		if (!this.userName.isEmpty() && !this.userName.equals(DEFAULT_USER) 
 				&& this.addNewScores(TopScoreAdapter.SCORE_SET_PREFIX + this.gameInProgress)) {
 			topScore.setVisibility(ImageView.VISIBLE);
+			soundResource = R.raw.allegro;
 		} else { // if user name NOT set, show warning as toast message
 			topScore.setVisibility(ImageView.INVISIBLE);
-			Toast.makeText(FaceMatchActivity.this,
+			soundResource = R.raw.climb;
+			if (this.userName.equals(DEFAULT_USER))
+			    Toast.makeText(FaceMatchActivity.this,
 					"Set User in Settings to enable Top Scores", Toast.LENGTH_LONG).show();		
 		}
 		this.timerCancelled = true;
 		this.gameInProgress = 0;
 		
+		if (this.soundsOn)
+			this.playFeedbackTone(soundResource);
 			
 		builder.setView(dialogView);	
 		builder.setPositiveButton(R.string.ok,
@@ -642,22 +660,14 @@ public class FaceMatchActivity extends Activity implements
 	/*
 	 * Ringtone playing
 	 */
-	private void playFeedbackTone(int answer) {
+	private void playFeedbackTone(int soundResource) {
 
-		int soundFile;
-		
-		if (this.mGame.getCurrentRightAnswer() == answer) {
-			soundFile = R.raw.confirm;
-		} else {
-			soundFile = R.raw.missedit;
-		}		
-		
 		if (null != this.mediaPlayer && this.mediaPlayer.isPlaying()) {
 			this.mediaPlayer.stop();
 			this.mediaPlayer.release();
 		}
 
-		this.mediaPlayer = MediaPlayer.create(this, soundFile);
+		this.mediaPlayer = MediaPlayer.create(this, soundResource);
 		mediaPlayer.start(); // no need to call prepare(); create() does that for you
 	}
 	

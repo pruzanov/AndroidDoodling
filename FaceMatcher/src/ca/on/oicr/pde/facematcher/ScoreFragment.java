@@ -16,7 +16,7 @@ public class ScoreFragment extends Fragment {
 	OnBannerClickListener mCallback;
 	private int gameType;
 	private int rowsToShow;
-	public static final int MIN_ROWS = 3;
+	public static final int MIN_ROWS = 4;
 	public static final int MAX_ROWS = 9;
 	public int getGameType() {
 		return gameType;
