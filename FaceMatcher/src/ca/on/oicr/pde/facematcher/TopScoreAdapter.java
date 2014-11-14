@@ -3,7 +3,7 @@ package ca.on.oicr.pde.facematcher;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
@@ -52,6 +52,7 @@ public class TopScoreAdapter extends ArrayAdapter<Score> {
 	}
 
 	
+	@SuppressLint("InflateParams")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		

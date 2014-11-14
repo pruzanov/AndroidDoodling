@@ -2,13 +2,8 @@ package ca.on.oicr.pde.facematcher;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,11 +17,11 @@ import android.widget.TextView;
 
 public class MatchGameFragment extends Fragment {
 	
-	private final TimerUpdateReceiver timerUpdateReceiver = new TimerUpdateReceiver();
-	static final String TIMERCHANGE_INTENT = "ca.on.oicr.pde.facematcher.timerChanged";
+	//private final TimerUpdateReceiver timerUpdateReceiver = new TimerUpdateReceiver();
+	//static final String TIMERCHANGE_INTENT = "ca.on.oicr.pde.facematcher.timerChanged";
 	private static final int MAX_TIME = 600;
-	private static final int REGISTER_RECEIVER = 1;
-	private static final int UNREGISTER_RECEIVER = 2;
+	//private static final int REGISTER_RECEIVER = 1;
+	//private static final int UNREGISTER_RECEIVER = 2;
 	private static final int[] image_ids = { R.id.face_thumbnail_1,	R.id.face_thumbnail_2,
 		                                     R.id.face_thumbnail_3, R.id.face_thumbnail_4 };
 	OnAnswerSelectedListener mCallback;
@@ -100,7 +95,7 @@ public class MatchGameFragment extends Fragment {
 	}
 	
 	// Receiver registration
-	public void registerReceiver(int FLAG) {
+	/*public void registerReceiver(int FLAG) {
 		// Do not do anything if we are not running timed game
 		if (this.gameType != FaceMatchActivity.FACE_MATCH_TIMED_GAME)
 			return;
@@ -119,10 +114,10 @@ public class MatchGameFragment extends Fragment {
 		break;
 		};
 		
-	}
+	}*/
 	
 	//Register receiver on Resume
-	@Override
+	/*@Override
 	public void onResume() {
 		super.onResume();
 		this.registerReceiver(REGISTER_RECEIVER);
@@ -133,7 +128,7 @@ public class MatchGameFragment extends Fragment {
 	public void onPause() {
 		this.registerReceiver(UNREGISTER_RECEIVER);
 		super.onPause();
-	}
+	}*/
 	
 	
 
@@ -155,10 +150,10 @@ public class MatchGameFragment extends Fragment {
 			return null;
 		}
 		
-		TextView scoreTView = (TextView) fragmentView.findViewById(R.id.player_score);
-		String currentScore = container.getResources().getString(R.string.score_string) 
-				            + this.getScore();
-		scoreTView.setText(currentScore);
+		//TextView scoreTView = (TextView) fragmentView.findViewById(R.id.player_score);
+		//String currentScore = container.getResources().getString(R.string.score_string) 
+		//		            + this.getScore();
+		//scoreTView.setText(currentScore);
 		return fragmentView;
 	}
 
@@ -281,10 +276,10 @@ public class MatchGameFragment extends Fragment {
 				rb_right_answer.setBackgroundColor(getResources().getColor(R.color.right_answer));
 			}
 		} else {
-			int [] thumbIDs = {R.id.face_thumbnail_1, R.id.face_thumbnail_2,
-		                       R.id.face_thumbnail_3, R.id.face_thumbnail_4};
-			int [] feedbackIDs = {R.id.feedback_icon_1, R.id.feedback_icon_2,
-					              R.id.feedback_icon_3, R.id.feedback_icon_4};
+			int [] thumbIDs =    {R.id.face_thumbnail_1, R.id.face_thumbnail_2,
+		                          R.id.face_thumbnail_3, R.id.face_thumbnail_4};
+			int [] feedbackIDs = {R.id.feedback_icon_1,  R.id.feedback_icon_2,
+					              R.id.feedback_icon_3,  R.id.feedback_icon_4};
 			for (int i = 0; i < FaceMatchActivity.OPTIONS_COUNT; i++) {
 				ImageView thumbnailView = (ImageView) getView().findViewById(
 						thumbIDs[i]);
@@ -337,7 +332,7 @@ public class MatchGameFragment extends Fragment {
 		timerView.invalidate();
 	}
 	
-	class TimerUpdateReceiver extends BroadcastReceiver {
+	/*class TimerUpdateReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -349,5 +344,5 @@ public class MatchGameFragment extends Fragment {
 				Log.e(FaceMatchActivity.TAG, "Failed to updated Player's Timer");
 			}
 		}
-	}
+	}*/
 }

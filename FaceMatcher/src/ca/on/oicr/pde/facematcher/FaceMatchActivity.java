@@ -11,13 +11,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
@@ -42,6 +42,7 @@ public class FaceMatchActivity extends Activity implements
 		ConfigureDialogFragment.ConfigureDialogListener,
 		ScoreFragment.OnBannerClickListener {
 
+	private final TimerElapseReceiver timerElapsedReceiver = new TimerElapseReceiver();
 	// Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
 	protected static final int QUIZES_COUNT  = 5;
@@ -51,9 +52,9 @@ public class FaceMatchActivity extends Activity implements
 	public static final int FACE_MATCH_GAME       = 2;
 	public static final int FACE_MATCH_TIMED_GAME = 3;
 	// Special bonus for speed
-	private static final int MAX_TIME_BONUS = 100;
-	private static final int GUESSED_RIGHT_SCORE = 15;
-	private static final int GAME_SPAN = 120;
+	protected static final int MAX_TIME_BONUS = 100;
+	protected static final int GUESSED_RIGHT_SCORE = 15;
+	protected static final int GAME_SPAN = 120;
 	//SharedPreferences
 	public static final String GAME_PREFS = "game_config";
 	public static final String GAME_USER  = "user_name";
@@ -61,17 +62,19 @@ public class FaceMatchActivity extends Activity implements
 	public static final String DEFAULT_USER = "anonymous";
 	public static final int KEPT_SCORES = 10;
 	private final Comparator<Score> SCORECOMPARATOR = new ScoreComparator();
+	// For Broadcast Receiver
+	private static final int REGISTER_RECEIVER = 1;
+	private static final int UNREGISTER_RECEIVER = 2;
+	static final String TIMERELAPSE_INTENT = "ca.on.oicr.pde.facematcher.timerElapsed";
 	
 	private FragmentManager mFragmentManager;
 	private MatchGame mGame;
 	private int gameInProgress;
 	private int currentScore;
-	private int timeBonus;
-	private int gameFragmentCounter;
-	private boolean timerCancelled;
 	private boolean soundsOn;
 	private String userName;
 	private MediaPlayer mediaPlayer;
+	private MatchGameContainerFragment mGameContainer;
 	
 	/**
 	 * Whether or not the system UI should be auto-hidden after
@@ -105,7 +108,7 @@ public class FaceMatchActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.gameInProgress = 0;
-		this.timerCancelled = true;
+		//this.timerCancelled = true;
 		Log.i(TAG, getClass().getSimpleName() + ":entered onCreate()");
 		setContentView(R.layout.main);
 
@@ -193,6 +196,27 @@ public class FaceMatchActivity extends Activity implements
 			super.onBackPressed();
 		}
 	}
+	
+	public void registerReceiver(int FLAG) {
+		// Do not do anything if we are not running timed game
+		if (this.gameInProgress != FACE_MATCH_TIMED_GAME)
+			return;
+		
+		LocalBroadcastManager lmb = LocalBroadcastManager.getInstance(this);
+		
+		switch (FLAG) {
+		case REGISTER_RECEIVER:
+		  IntentFilter timechangeFilter = new IntentFilter(TIMERELAPSE_INTENT);
+		  lmb.registerReceiver(timerElapsedReceiver, timechangeFilter);
+		break;
+		case UNREGISTER_RECEIVER:
+			lmb.unregisterReceiver(timerElapsedReceiver);
+		break;
+		default:
+		break;
+		};
+		
+	}
 
 	private void goToTopMenu() {
 
@@ -209,7 +233,9 @@ public class FaceMatchActivity extends Activity implements
 				fragmentTransaction.commit();
 			}
 		}, 1000L);
-		this.timerCancelled = true;
+		if (null != this.mGameContainer) {
+		   this.mGameContainer.setTimerCancelled(true);
+		}
 		this.gameInProgress = 0;
 	}
 
@@ -249,23 +275,35 @@ public class FaceMatchActivity extends Activity implements
 		case TopMenuFragment.NAME_MATCH:
 			Log.d(TAG, "Starting NameMatching Game");
 			this.gameInProgress = NAME_MATCH_GAME;
-			this.startGame(this.gameInProgress);
+			this.startGame();
 			break;
 		case TopMenuFragment.FACE_MATCH:
 			Log.d(TAG, "Starting FaceMatching Game");
 			this.gameInProgress = FACE_MATCH_GAME;
-			this.startGame(this.gameInProgress);
+			this.startGame();
 			break;
 		case TopMenuFragment.TIMED_MATCH:
 			Log.d(TAG, "Starting TimedMatching Game");
 			this.gameInProgress = FACE_MATCH_TIMED_GAME;
-			this.startGame(this.gameInProgress);
+			this.startGame();
 			break;
 		default:
 			break;
 		};
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		this.registerReceiver(REGISTER_RECEIVER);
+	};
+	
+	// Unregister receiver on Destroy
+	@Override
+	public void onPause() {
+		this.registerReceiver(UNREGISTER_RECEIVER);
+		super.onPause();
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -284,7 +322,7 @@ public class FaceMatchActivity extends Activity implements
 			}
 		}
 				
-		this.updateGame(this.gameInProgress, index);
+		this.updateGame(index);
 	}
 
 	public void onRadioButtonClicked(View v) {
@@ -322,7 +360,7 @@ public class FaceMatchActivity extends Activity implements
 			}
 		}
 
-		this.updateGame(this.gameInProgress, index);
+		this.updateGame(index);
 
 	}
 
@@ -336,54 +374,45 @@ public class FaceMatchActivity extends Activity implements
 	 * delayedHide(100); }
 	 */
 
-	private void startGame(int type) {
+	private void startGame() {
+		
 		if (null == this.mGame) {
 			Log.e(TAG, "Game was not setup properly, won't start");
 			return;
 		}
 		this.currentScore = 0;
-		this.timeBonus = MAX_TIME_BONUS;
-		this.gameFragmentCounter = 0;
-		this.timerCancelled = false;
-		new TimerTask().execute(FaceMatchActivity.GAME_SPAN);
-		this.updateGame(type, -1);
+		this.mGameContainer = MatchGameContainerFragment.instanceOf(this.gameInProgress);
+		this.mGameContainer.setFistSet(mGame.getNextGameSet());
+		FragmentTransaction gameStartTransaction = mFragmentManager
+				.beginTransaction()
+				.setCustomAnimations(R.animator.fade_in,
+				                     R.animator.fade_out)
+				.addToBackStack("GameStarted")
+		        .replace(R.id.ui_fragment_container,
+				this.mGameContainer, "GAME");
+		gameStartTransaction.commit();
+		//this.mGameContainer.startGame(this.gameInProgress, mGame.getNextGameSet());
 	}
 
-	private void updateGame(int type, int answer) {
-
-		// Reveal answers if user made a choice
-		if (answer >= 0) {
-			try {
-				MatchGameFragment current = (MatchGameFragment) getFragmentManager()
-						.findFragmentByTag("CURRENT");
-				current.showAnswers(answer);
-				Log.d(TAG, "Showing answers, would updates scores");
-				if (answer == current.getRightAnswer()) {
-					this.currentScore += GUESSED_RIGHT_SCORE;
-				}
-			} catch (Exception e) {
-				Log.e(TAG, "Could not get current MatchGameFragment fragment");
-			}
-		}
-
-		if (type != FACE_MATCH_TIMED_GAME
-				&& this.gameFragmentCounter >= QUIZES_COUNT) {
+	private void updateGame(int answer) {
+		
+		if (this.gameInProgress != FaceMatchActivity.FACE_MATCH_TIMED_GAME
+				&& this.mGameContainer.getGameFragmentCounter() >= QUIZES_COUNT) {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException ie) {
-				Log.e(TAG, "Interrupted");
+				Log.e(FaceMatchActivity.TAG, "Interrupted");
 			}
 			this.finishGame();
 			return;
 		}
-
-		MatchGame.GameSet nextSet = this.mGame.getNextGameSet();
-		this.constructAndShowNext(nextSet, type);
+		
+		this.mGameContainer.updateGame(answer, mGame.getNextGameSet());
 	}
 
 	private void finishGame() {
 		
-		this.currentScore += this.timeBonus;
+		this.currentScore += this.mGameContainer.getTimeBonus();
 		String scoreMessage = "Your Score: " + this.currentScore;
 		// SHOW SCORE TODO - if score makes it to the top, notify player
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -404,7 +433,7 @@ public class FaceMatchActivity extends Activity implements
 			    Toast.makeText(FaceMatchActivity.this,
 					"Set User in Settings to enable Top Scores", Toast.LENGTH_LONG).show();		
 		}
-		this.timerCancelled = true;
+		this.mGameContainer.setTimerCancelled(true);
 		this.gameInProgress = 0;
 		
 		if (this.soundsOn)
@@ -424,51 +453,7 @@ public class FaceMatchActivity extends Activity implements
 		dialog.show();
 	}
 
-	private void constructAndShowNext(MatchGame.GameSet set, int type) {
-		this.gameFragmentCounter++;
-		final MatchGameFragment nextFragment;
-
-		if (type == NAME_MATCH_GAME) {
-			Drawable thumb = getResources().getDrawable(
-					getResources().getIdentifier(set.URLs[set.indexMe],
-							"drawable", this.getPackageName()));
-			nextFragment = MatchGameFragment.instanceOf(thumb, set.peopleNames,
-					set.indexMe, this.currentScore);
-			this.updateCurrentFragment(nextFragment);
-		} else if (type == FACE_MATCH_GAME || type == FACE_MATCH_TIMED_GAME) {
-			Drawable[] thumbs = new Drawable[OPTIONS_COUNT];
-			for (int d = 0; d < OPTIONS_COUNT; d++) {
-				thumbs[d] = getResources().getDrawable(
-						getResources().getIdentifier(set.URLs[d], "drawable",
-								this.getPackageName()));
-			}
-			boolean timer = type == FACE_MATCH_TIMED_GAME ? true : false;
-			nextFragment = MatchGameFragment.instanceOf(thumbs,
-					set.peopleNames[set.indexMe], timer, set.indexMe,
-					this.currentScore);
-			this.updateCurrentFragment(nextFragment);
-		}
-	}
-
-	/*
-	 * Function for replacing fragments during a game
-	 */
-	private void updateCurrentFragment(final MatchGameFragment nextFragment) {
-		Handler fragSwapper = new Handler();
-		fragSwapper.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				final FragmentTransaction fragmentTransaction = mFragmentManager
-						.beginTransaction();
-				fragmentTransaction.setCustomAnimations(R.animator.fade_in,
-						R.animator.fade_out);
-				fragmentTransaction.replace(R.id.ui_fragment_container,
-						nextFragment, "CURRENT");
-				fragmentTransaction.commit();
-			}
-		}, 1000L);
-	}
-	
+		
 	/*
 	 * Function that initialises and shows leaderboard (scores) fragment
 	 */
@@ -519,64 +504,8 @@ public class FaceMatchActivity extends Activity implements
 	 * mHideHandler.postDelayed(mHideRunnable, delayMillis); }
 	 */
 
-	/*
-	 * 
-	 * private void updateAndShowScore () { // TODO get current score and append
-	 * to the total score, check if // we earn any bonus/badges }
-	 * 
-	 * private void showLeaderboard () { // TODO }
-	 */
+
 	
-	/*
-	 * TimerTask takes care of timed game and timer update in timed Face Matching Game
-	 */
-	class TimerTask extends AsyncTask<Integer, Integer, Void> {
-
-		@Override
-		protected void onPostExecute(Void result) {
-			if (FaceMatchActivity.this.gameInProgress == FACE_MATCH_TIMED_GAME) {
-				FaceMatchActivity.this.finishGame();
-			}
-		}
-
-		@Override
-		protected void onProgressUpdate(Integer... values) {
-			// decrement time bonus
-			FaceMatchActivity.this.timeBonus = values[0];
-			if (FaceMatchActivity.this.timeBonus < 0)
-				FaceMatchActivity.this.timeBonus = 0;
-			//Log.d(TAG, "Current Time bonus: " + FaceMatchActivity.this.timeBonus);
-			//Log.d(TAG, "Current Timer secs: " + values[1]);
-			if (FaceMatchActivity.this.gameInProgress == FACE_MATCH_TIMED_GAME && values[1] > 0) {
-				Intent intent = new Intent(MatchGameFragment.TIMERCHANGE_INTENT);
-				intent.putExtra("timer", values[1]);
-				LocalBroadcastManager.getInstance(FaceMatchActivity.this).sendBroadcast(intent);
-			}
-		}
-
-		@Override
-		protected Void doInBackground(Integer... params) {
-			int timerSeconds = params[0];
-			for (int t = 0; t <= params[0]; t++) {
-				if (FaceMatchActivity.this.timerCancelled)
-					break;
-				try {
-					Thread.sleep(1000L); // one second tick
-				} catch (InterruptedException ie) {
-					Log.d(TAG, "Timer Thread was interupted");
-				}
-				timerSeconds--;
-				int progress = (int) ((1.0f - (t / (float) params[0])) * FaceMatchActivity.MAX_TIME_BONUS);
-				Log.d(TAG, "Progress is " + progress);
-
-				this.publishProgress(progress, timerSeconds);
-			}
-			return null;
-
-		}
-
-	}
-
 	/*
 	 * This is to show a simple 'About' dialog
 	 */
@@ -622,6 +551,11 @@ public class FaceMatchActivity extends Activity implements
 		
 	}
 	
+	/**
+	 * 
+	 * @param gameTypeKey - which Leader Board gets updated
+	 * @return true if score is a new Top Score, false if it is not
+	 */
 	private boolean addNewScores(String gameTypeKey) {
 		
 		boolean newTopScore = true;
@@ -678,6 +612,16 @@ public class FaceMatchActivity extends Activity implements
 		}
 	};
 	
+	/**
+	 * If we receive update from MatchGameContainerFragment, finish the game
+	 */
+	class TimerElapseReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			FaceMatchActivity.this.finishGame();
+		}
+	}
 	
 
 }
