@@ -93,44 +93,7 @@ public class MatchGameFragment extends Fragment {
 	public interface OnAnswerSelectedListener {
 		public void onAnswerSelected(int option);
 	}
-	
-	// Receiver registration
-	/*public void registerReceiver(int FLAG) {
-		// Do not do anything if we are not running timed game
-		if (this.gameType != FaceMatchActivity.FACE_MATCH_TIMED_GAME)
-			return;
-		
-		LocalBroadcastManager lmb = LocalBroadcastManager.getInstance(this.getActivity());
-		
-		switch (FLAG) {
-		case REGISTER_RECEIVER:
-		  IntentFilter timechangeFilter = new IntentFilter(TIMERCHANGE_INTENT);
-		  lmb.registerReceiver(timerUpdateReceiver, timechangeFilter);
-		break;
-		case UNREGISTER_RECEIVER:
-			lmb.unregisterReceiver(timerUpdateReceiver);
-		break;
-		default:
-		break;
-		};
-		
-	}*/
-	
-	//Register receiver on Resume
-	/*@Override
-	public void onResume() {
-		super.onResume();
-		this.registerReceiver(REGISTER_RECEIVER);
-	};
-	
-	// Unregister receiver on Destroy
-	@Override
-	public void onPause() {
-		this.registerReceiver(UNREGISTER_RECEIVER);
-		super.onPause();
-	}*/
-	
-	
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,

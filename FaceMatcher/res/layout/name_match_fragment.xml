@@ -11,8 +11,8 @@
         android:layout_gravity="top|center_horizontal"
         android:layout_marginBottom="10dp"
         android:contentDescription="@string/image_type"
-        android:background="#FF99CC"
-        android:src="@drawable/banner_game01" />
+        android:background="@color/game2_color"
+        android:src="@drawable/banner_game02" />
 
     <ImageView
         android:id="@+id/face_thumbnail"

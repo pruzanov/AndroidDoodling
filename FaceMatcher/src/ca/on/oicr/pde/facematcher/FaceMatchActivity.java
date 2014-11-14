@@ -576,13 +576,13 @@ public class FaceMatchActivity extends Activity implements
 			storedScores.add(nextScore);
 		}
 		storedScores.add(new Score(this.userName, this.currentScore));
-		Collections.sort(storedScores, SCORECOMPARATOR);
-		
+				
 		for (Score score : storedScores) {
 			scoreSet.add(score.toString());
 			if (scoreSet.size() >= KEPT_SCORES)
 				break;
 		}
+		Collections.sort(storedScores, SCORECOMPARATOR);
 		
 		sp.edit().putStringSet(gameTypeKey, scoreSet).commit();
         return newTopScore;

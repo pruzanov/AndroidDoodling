@@ -120,6 +120,10 @@ public class MatchGameContainerFragment extends Fragment {
 				Log.e(FaceMatchActivity.TAG,
 						"Could not get current MatchGameFragment fragment");
 			}
+			
+			//Update Score feedback
+			TextView scoreView = (TextView) getView().findViewById(R.id.player_score);
+			scoreView.setText(getResources().getString(R.string.score_string) + this.currentScore);
 		}
 
 		this.constructAndShowNext(nextSet);

@@ -68,12 +68,12 @@ public class ScoreFragment extends Fragment {
 
 		switch (this.getGameType()) {
 		case FaceMatchActivity.NAME_MATCH_GAME:
-			banner.setImageResource(R.drawable.banner_game01);
-			banner.setBackgroundResource(R.color.game1_color);
-			break;
-		case FaceMatchActivity.FACE_MATCH_GAME:
 			banner.setImageResource(R.drawable.banner_game02);
 			banner.setBackgroundResource(R.color.game2_color);
+			break;
+		case FaceMatchActivity.FACE_MATCH_GAME:
+			banner.setImageResource(R.drawable.banner_game01);
+			banner.setBackgroundResource(R.color.game1_color);
 			break;
 		case FaceMatchActivity.FACE_MATCH_TIMED_GAME:
 			banner.setImageResource(R.drawable.banner_game03);

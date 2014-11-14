@@ -12,8 +12,8 @@
         android:layout_gravity="top|center_horizontal"
         android:layout_marginBottom="5dp"
         android:contentDescription="@string/image_type"
-        android:background="#99CC00"
-        android:src="@drawable/banner_game02" />
+        android:background="@color/game1_color"
+        android:src="@drawable/banner_game01" />
 
     <LinearLayout
         android:id="@+id/face_thumb_row1"

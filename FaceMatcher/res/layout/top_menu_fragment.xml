@@ -84,7 +84,7 @@
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="20dp"
             android:contentDescription="@string/image_type"
-            android:src="@drawable/btn_game01"
+            android:src="@drawable/btn_game02"
             android:background="@android:color/transparent" />
 
         <ImageButton
@@ -95,7 +95,7 @@
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="20dp"
             android:contentDescription="@string/image_type"
-            android:src="@drawable/btn_game02"
+            android:src="@drawable/btn_game01"
             android:background="@android:color/transparent" />
 
         <ImageButton
