@@ -15,12 +15,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -40,9 +38,9 @@ public class FaceMatchActivity extends Activity implements
 		TopMenuFragment.OnOptionSelectedListener,
 		MatchGameFragment.OnAnswerSelectedListener,
 		ConfigureDialogFragment.ConfigureDialogListener,
-		ScoreFragment.OnBannerClickListener {
+		ScoreFragment.OnBannerClickListener,
+		MatchGameContainerFragment.OnTimeElapsedListener {
 
-	private final TimerElapseReceiver timerElapsedReceiver = new TimerElapseReceiver();
 	// Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
 	protected static final int QUIZES_COUNT  = 5;
@@ -54,7 +52,7 @@ public class FaceMatchActivity extends Activity implements
 	// Special bonus for speed
 	protected static final int MAX_TIME_BONUS = 100;
 	protected static final int GUESSED_RIGHT_SCORE = 15;
-	protected static final int GAME_SPAN = 120;
+	protected static final int GAME_SPAN = 60;
 	//SharedPreferences
 	public static final String GAME_PREFS = "game_config";
 	public static final String GAME_USER  = "user_name";
@@ -62,10 +60,6 @@ public class FaceMatchActivity extends Activity implements
 	public static final String DEFAULT_USER = "anonymous";
 	public static final int KEPT_SCORES = 10;
 	private final Comparator<Score> SCORECOMPARATOR = new ScoreComparator();
-	// For Broadcast Receiver
-	private static final int REGISTER_RECEIVER = 1;
-	private static final int UNREGISTER_RECEIVER = 2;
-	static final String TIMERELAPSE_INTENT = "ca.on.oicr.pde.facematcher.timerElapsed";
 	
 	private FragmentManager mFragmentManager;
 	private MatchGame mGame;
@@ -197,27 +191,6 @@ public class FaceMatchActivity extends Activity implements
 		}
 	}
 	
-	public void registerReceiver(int FLAG) {
-		// Do not do anything if we are not running timed game
-		if (this.gameInProgress != FACE_MATCH_TIMED_GAME)
-			return;
-		
-		LocalBroadcastManager lmb = LocalBroadcastManager.getInstance(this);
-		
-		switch (FLAG) {
-		case REGISTER_RECEIVER:
-		  IntentFilter timechangeFilter = new IntentFilter(TIMERELAPSE_INTENT);
-		  lmb.registerReceiver(timerElapsedReceiver, timechangeFilter);
-		break;
-		case UNREGISTER_RECEIVER:
-			lmb.unregisterReceiver(timerElapsedReceiver);
-		break;
-		default:
-		break;
-		};
-		
-	}
-
 	private void goToTopMenu() {
 
 		Handler fragSwapper = new Handler();
@@ -292,18 +265,6 @@ public class FaceMatchActivity extends Activity implements
 		};
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		this.registerReceiver(REGISTER_RECEIVER);
-	};
-	
-	// Unregister receiver on Destroy
-	@Override
-	public void onPause() {
-		this.registerReceiver(UNREGISTER_RECEIVER);
-		super.onPause();
-	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -391,7 +352,6 @@ public class FaceMatchActivity extends Activity implements
 		        .replace(R.id.ui_fragment_container,
 				this.mGameContainer, "GAME");
 		gameStartTransaction.commit();
-		//this.mGameContainer.startGame(this.gameInProgress, mGame.getNextGameSet());
 	}
 
 	private void updateGame(int answer) {
@@ -412,9 +372,11 @@ public class FaceMatchActivity extends Activity implements
 
 	private void finishGame() {
 		
-		this.currentScore += this.mGameContainer.getTimeBonus();
-		String scoreMessage = "Your Score: " + this.currentScore;
-		// SHOW SCORE TODO - if score makes it to the top, notify player
+		int finalScore = (this.mGameContainer.getCurrentScore() 
+				        + this.mGameContainer.getTimeBonus());
+		String scoreMessage = "Your Score: " + finalScore;
+		this.currentScore = finalScore;
+		// SHOW SCORE - if score makes it to the top, notify player
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		View dialogView = this.getLayoutInflater().inflate(R.layout.complete_dialog, null);
 		TextView scoreView = (TextView) dialogView.findViewById(R.id.gameover_text);
@@ -619,8 +581,14 @@ public class FaceMatchActivity extends Activity implements
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			Log.d(TAG, "Received Time elapsed intent");
 			FaceMatchActivity.this.finishGame();
 		}
+	}
+
+	@Override
+	public void onTimeElapsed() {
+		this.finishGame();	
 	}
 	
 

@@ -17,11 +17,6 @@ import android.widget.TextView;
 
 public class MatchGameFragment extends Fragment {
 	
-	//private final TimerUpdateReceiver timerUpdateReceiver = new TimerUpdateReceiver();
-	//static final String TIMERCHANGE_INTENT = "ca.on.oicr.pde.facematcher.timerChanged";
-	private static final int MAX_TIME = 600;
-	//private static final int REGISTER_RECEIVER = 1;
-	//private static final int UNREGISTER_RECEIVER = 2;
 	private static final int[] image_ids = { R.id.face_thumbnail_1,	R.id.face_thumbnail_2,
 		                                     R.id.face_thumbnail_3, R.id.face_thumbnail_4 };
 	OnAnswerSelectedListener mCallback;
@@ -104,19 +99,14 @@ public class MatchGameFragment extends Fragment {
 					        savedInstanceState);
 		} else if (this.getGameType() == FaceMatchActivity.FACE_MATCH_GAME) {
 			fragmentView =  onCreateFaceMatchView(inflater, container,
-					        savedInstanceState);
+					        savedInstanceState, false);
 		} else if (this.getGameType() == FaceMatchActivity.FACE_MATCH_TIMED_GAME) {
 			fragmentView =  onCreateFaceMatchView(inflater, container,
-					        savedInstanceState);
-			fragmentView.findViewById(R.id.player_time).setVisibility(View.VISIBLE);
+					        savedInstanceState, true);
 		} else {
 			return null;
 		}
-		
-		//TextView scoreTView = (TextView) fragmentView.findViewById(R.id.player_score);
-		//String currentScore = container.getResources().getString(R.string.score_string) 
-		//		            + this.getScore();
-		//scoreTView.setText(currentScore);
+
 		return fragmentView;
 	}
 
@@ -124,10 +114,15 @@ public class MatchGameFragment extends Fragment {
 	 * onCreateView() methods for FaceMatchFragment
 	 */
 	public View onCreateFaceMatchView(LayoutInflater inflater,
-			ViewGroup container, Bundle savedInstanceState) {
+			ViewGroup container, Bundle savedInstanceState, boolean timed) {
 		View rootView = inflater.inflate(R.layout.face_match_fragment,
-				container, false);
-
+				                         container, false);
+        if (timed) {
+        	ImageView banner = (ImageView) rootView.findViewById(R.id.banner_face_match);
+        	banner.setImageResource(R.drawable.banner_game03);
+        	banner.setBackgroundResource(R.color.game3_color);
+        }
+        
 		for (int i = 0; i < image_ids.length; i++) {
 			ImageView thumb = (ImageView) rootView.findViewById(image_ids[i]);
 			thumb.setImageDrawable(this.faceThumbnails[i]);
@@ -270,42 +265,4 @@ public class MatchGameFragment extends Fragment {
 
 		}
 	
-	public void updateTimer (int seconds) {
-		// Forbid time of more than MAX_TIME:
-		if (seconds > MAX_TIME) {
-			seconds = MAX_TIME;
-		} else if (seconds < 0) {
-			seconds = 0;
-		}
-		
-		StringBuilder tSB = new StringBuilder();
-		if (seconds >= 600)
-			tSB.append(seconds/60).append(":");
-		else
-			tSB.append("0").append(seconds/60).append(":");
-		
-		int reminder = seconds % 60;
-		if (reminder >= 10)
-			tSB.append(reminder);
-		else
-			tSB.append("0").append(reminder);
-		
-		TextView timerView = (TextView) getView().findViewById(R.id.player_time);
-		timerView.setText(tSB.toString());
-		timerView.invalidate();
-	}
-	
-	/*class TimerUpdateReceiver extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			int seconds = intent.getExtras().getInt("timer");
-			//Log.d(FaceMatchActivity.TAG, "Received " + seconds + " seconds in update");
-			try {
-				MatchGameFragment.this.updateTimer(seconds);
-			} catch (NullPointerException np) {
-				Log.e(FaceMatchActivity.TAG, "Failed to updated Player's Timer");
-			}
-		}
-	}*/
 }

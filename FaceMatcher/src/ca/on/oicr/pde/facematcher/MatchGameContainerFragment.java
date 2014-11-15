@@ -3,12 +3,10 @@ package ca.on.oicr.pde.facematcher;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,13 +15,7 @@ import android.widget.TextView;
 import ca.on.oicr.pde.facematcher.MatchGame.GameSet;
 
 public class MatchGameContainerFragment extends Fragment {
-	@Override
-	public void onAttach(Activity activity) {
-		// TODO Auto-generated method stub
-		super.onAttach(activity);
-		this.startGame();
-	}
-
+	
 	private int currentType = 1;
 	private int currentScore;
 	private int timeBonus;
@@ -46,11 +38,20 @@ public class MatchGameContainerFragment extends Fragment {
 	protected static final int MAX_TIME_BONUS = 100;
 	protected static final int GUESSED_RIGHT_SCORE = 15;
 	protected static final int GAME_SPAN = 120;
-
+    OnTimeElapsedListener mCallback;
+	
+	// Container Activity must implement this interface
+    public interface OnTimeElapsedListener {
+			public void onTimeElapsed();
+	}
 	
 	// Setters for game parameters
 	public void setGameType(int currentType) {
 		this.currentType = currentType;
+	}
+
+	protected int getCurrentScore() {
+		return currentScore;
 	}
 
 	public void setCurrentScore(int currentScore) {
@@ -90,12 +91,28 @@ public class MatchGameContainerFragment extends Fragment {
 	}
 
 	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			mCallback = (OnTimeElapsedListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ " must implement OnTimeElapsedListener");
+		}	
+		this.startGame();
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		View rootView = inflater.inflate(R.layout.game_container_fragment,
 				container, false);
-
+        if (this.currentType == FaceMatchActivity.FACE_MATCH_TIMED_GAME) {
+        	rootView.findViewById(R.id.player_time).setVisibility(View.VISIBLE);
+        } else {
+        	rootView.findViewById(R.id.player_time).setVisibility(View.INVISIBLE);
+        }
 		return rootView;
 	}
 
@@ -111,10 +128,8 @@ public class MatchGameContainerFragment extends Fragment {
 				MatchGameFragment current = (MatchGameFragment) getFragmentManager()
 						.findFragmentByTag("CURRENT");
 				current.showAnswers(answer);
-				Log.d(FaceMatchActivity.TAG,
-						"Showing answers, would updates scores");
 				if (answer == current.getRightAnswer()) {
-					this.currentScore += GUESSED_RIGHT_SCORE;
+					setCurrentScore(this.currentScore += GUESSED_RIGHT_SCORE);
 				}
 			} catch (Exception e) {
 				Log.e(FaceMatchActivity.TAG,
@@ -213,9 +228,8 @@ public class MatchGameContainerFragment extends Fragment {
 		@Override
 		protected void onPostExecute(Void result) {
 			if (currentType == FaceMatchActivity.FACE_MATCH_TIMED_GAME) {
-				Intent intent = new Intent(FaceMatchActivity.TIMERELAPSE_INTENT);
-			    LocalBroadcastManager.getInstance(MatchGameContainerFragment.this.getActivity())
-			                         .sendBroadcast(intent);
+				Log.d(FaceMatchActivity.TAG, "Sending Time Elapsed Intent");
+			    mCallback.onTimeElapsed();
 			}
 		}
 	
@@ -227,17 +241,6 @@ public class MatchGameContainerFragment extends Fragment {
 			if (MatchGameContainerFragment.this.timeBonus < 0)
 				MatchGameContainerFragment.this.timeBonus = 0;
 			updateTimer(values[1]);
-			// Log.d(TAG, "Current Time bonus: " +
-			// FaceMatchActivity.this.timeBonus);
-			// Log.d(TAG, "Current Timer secs: " + values[1]);
-			/*if (currentType == FaceMatchActivity.FACE_MATCH_TIMED_GAME
-					&& values[1] > 0) {
-				Intent intent = new Intent(MatchGameFragment.TIMERCHANGE_INTENT);
-				intent.putExtra("timer", values[1]);
-				updateTimer(values[1]);
-				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(
-						intent);
-			}*/
 		}
 
 		@Override
