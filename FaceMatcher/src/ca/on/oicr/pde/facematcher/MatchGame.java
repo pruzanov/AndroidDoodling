@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
-/*
+/**
  * Class to be used by activity for making game fragments
  */
 
@@ -29,8 +29,8 @@ public class MatchGame {
 		this.setup();
 	}
 
-	/*
-	 * Load data and generate randomized array of indexes
+	/**
+	 * Load data and generate randomised array of indexes
 	 */
 	public void setup() {
 		this.randomizedIndexes = randomizeIndexes(this.gameData.length);
@@ -47,9 +47,10 @@ public class MatchGame {
 		return counter;
 	}
 
-	/*
-	 * Static function for randomizing indexes in N element array
-	 * returns randomized array of indexes
+	/**
+	 * Static function for randomising indexes in N element array
+	 * returns randomised array of indexes
+	 * @param length - the size of the array requested
 	 */
 	private static Integer[] randomizeIndexes(int length) {
 		Integer[] randomized = new Integer[length];
@@ -61,8 +62,9 @@ public class MatchGame {
 		return randomized;
 	}
 
-	/*
-	 * A set of FaceMatchActivity.OPTIONS_COUNT entries for setting up one fragment
+	/**
+	 * A set of FaceMatchActivity.OPTIONS_COUNT entries 
+	 * for setting up one fragment 
 	 */
 	class GameSet {
 		String[] peopleNames;

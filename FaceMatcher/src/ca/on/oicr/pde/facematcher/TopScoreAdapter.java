@@ -1,6 +1,8 @@
 package ca.on.oicr.pde.facematcher;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +26,7 @@ public class TopScoreAdapter extends ArrayAdapter<Score> {
 	private Context mContext;
 	private static LayoutInflater inflater = null;
 	private static final String EMPTY = "Empty";
+	private final Comparator<Score> SCORECOMPARATOR = new ScoreComparator();
 	
 	public TopScoreAdapter(Context c, int resource, int type, int shown_rows) {
 		super(c, resource);
@@ -33,6 +36,7 @@ public class TopScoreAdapter extends ArrayAdapter<Score> {
 		inflater = LayoutInflater.from(this.mContext);
 		this.list = new ArrayList<Score>();
 		this.list = this.readScores(SCORE_SET_PREFIX + this.mGameType);
+		Collections.sort(this.list, SCORECOMPARATOR);
 		while (this.list.size() < this.showRows)
 			this.list.add(new Score(EMPTY,0));
 	}
@@ -103,6 +107,16 @@ public class TopScoreAdapter extends ArrayAdapter<Score> {
 		}
 		return scores;
 	}
+	
+	/*
+	 * Comparator
+	 */
+	private class ScoreComparator implements Comparator<Score> {
+		public int compare(Score score1, Score score2) {
+			return Integer.valueOf(score2.getScore()).compareTo(
+				   Integer.valueOf(score1.getScore()));
+		}
+	};
 
 	
 }

@@ -15,6 +15,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+/**
+ * Arguably, the most important class as it creates the view
+ * for a single game view for all types of games
+ */
 public class MatchGameFragment extends Fragment {
 	
 	private static final int[] image_ids = { R.id.face_thumbnail_1,	R.id.face_thumbnail_2,
@@ -180,7 +184,7 @@ public class MatchGameFragment extends Fragment {
 		return rootView;
 	}
 
-	// Mehods for initialization
+	// Methods for initialisation
 	public void setFaceThumbnails(Drawable[] faces) {
 		this.faceThumbnails = faces;
 	}
@@ -210,8 +214,9 @@ public class MatchGameFragment extends Fragment {
 		}
 	}
 
-	/*
+	/**
 	 * This methods reveals the right (and wrong, if answered incorrectly) quiz answer(s)
+	 * @param index of the answer
 	 */
 	public void showAnswers(int answer) {
 		// Show Yes, I'm and mark right answer with green bg

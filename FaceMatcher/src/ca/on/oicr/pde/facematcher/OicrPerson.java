@@ -1,5 +1,6 @@
 package ca.on.oicr.pde.facematcher;
-/*
+
+/**
  * Container class for holding person's data
  */
 public class OicrPerson {
@@ -13,9 +14,8 @@ public class OicrPerson {
 		return this.imageID != 0 && !this.name.isEmpty();
 	}
 	
-	/*==============================================
+	/**
 	 * Setters and getters for name and image URL/id
-	 * ============================================
 	 */
 	public String getName() {
 		return name;

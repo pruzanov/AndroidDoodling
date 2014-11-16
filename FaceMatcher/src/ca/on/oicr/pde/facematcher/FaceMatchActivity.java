@@ -1,8 +1,6 @@
 package ca.on.oicr.pde.facematcher;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,10 +9,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -25,13 +21,12 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import ca.on.oicr.pde.facematcher.util.SystemUiHider;
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
+ * Main Activity for the Game. Navigation is possible with in-game buttons 
+ * and 'Back' button. Activity uses Fragments to show different views and 
+ * dynamically changing UI during the game
  * 
- * @see SystemUiHider
  */
 @SuppressLint("InflateParams")
 public class FaceMatchActivity extends Activity implements
@@ -59,7 +54,7 @@ public class FaceMatchActivity extends Activity implements
 	public static final String GAME_SOUND = "soundsOn";
 	public static final String DEFAULT_USER = "anonymous";
 	public static final int KEPT_SCORES = 10;
-	private final Comparator<Score> SCORECOMPARATOR = new ScoreComparator();
+	
 	
 	private FragmentManager mFragmentManager;
 	private MatchGame mGame;
@@ -70,39 +65,10 @@ public class FaceMatchActivity extends Activity implements
 	private MediaPlayer mediaPlayer;
 	private MatchGameContainerFragment mGameContainer;
 	
-	/**
-	 * Whether or not the system UI should be auto-hidden after
-	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-	 */
-	// private static final boolean AUTO_HIDE = true;
-
-	/**
-	 * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-	 * user interaction before hiding the system UI.
-	 */
-	// private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-	/**
-	 * If set, will toggle the system UI visibility upon interaction. Otherwise,
-	 * will show the system UI visibility upon interaction.
-	 */
-	// private static final boolean TOGGLE_ON_CLICK = true;
-
-	/**
-	 * The flags to pass to {@link SystemUiHider#getInstance}.
-	 */
-	// private static final int HIDER_FLAGS = SystemUiHider.FLAG_FULLSCREEN;
-
-	/**
-	 * The instance of the {@link SystemUiHider} for this activity.
-	 */
-	// private SystemUiHider mSystemUiHider;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.gameInProgress = 0;
-		//this.timerCancelled = true;
 		Log.i(TAG, getClass().getSimpleName() + ":entered onCreate()");
 		setContentView(R.layout.main);
 
@@ -118,44 +84,14 @@ public class FaceMatchActivity extends Activity implements
 		SharedPreferences sp = getSharedPreferences(GAME_PREFS, MODE_PRIVATE);
 		this.soundsOn = sp.getBoolean(GAME_SOUND, true);
 		this.userName = sp.getString(GAME_USER, DEFAULT_USER);
-		// final View controlsView =
-		// findViewById(R.id.fullscreen_content_controls);
-		// final View contentView = findViewById(R.id.fullscreen_content);
-
-		// Set up an instance of SystemUiHider to control the system UI for
-		// this activity.
-		// mSystemUiHider = SystemUiHider.getInstance(this, controlsView,
-		// HIDER_FLAGS);
-
-		// mSystemUiHider.setup();
-
-		/*
-		 * mSystemUiHider .setOnVisibilityChangeListener(new
-		 * SystemUiHider.OnVisibilityChangeListener() {
-		 * 
-		 * @Override
-		 * 
-		 * @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2) public void
-		 * onVisibilityChange(boolean visible) { if (visible && AUTO_HIDE) { //
-		 * Schedule a hide(). delayedHide(AUTO_HIDE_DELAY_MILLIS); } } });
-		 */
-
-		// Set up the user interaction to manually show or hide the system UI.
-		/*
-		 * controlsView.setOnClickListener(new View.OnClickListener() {
-		 * 
-		 * @Override public void onClick(View view) { if (TOGGLE_ON_CLICK) {
-		 * mSystemUiHider.toggle(); } else { mSystemUiHider.show(); } } });
-		 */
-
-		// Upon interacting with UI controls, delay any scheduled hide()
-		// operations to prevent the jarring behavior of controls going away
-		// while interacting with the UI.
-		// findViewById(R.id.dummy_button1).setOnTouchListener(
-		// mDelayHideTouchListener);
-
 	}
 
+	/**
+	 * We overriding this to show a confirmation dialog
+	 * 
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
 	@Override
 	public void onBackPressed() {
 
@@ -191,6 +127,12 @@ public class FaceMatchActivity extends Activity implements
 		}
 	}
 	
+	/**
+	 * Function for returning from a Game to the Top Menu
+	 * (may not be needed, actually since the UI got redesigned and
+	 * this functionality is redundant with BackStack-provided
+	 * ability to revert last fragment transaction
+	 */
 	private void goToTopMenu() {
 
 		Handler fragSwapper = new Handler();
@@ -206,14 +148,13 @@ public class FaceMatchActivity extends Activity implements
 				fragmentTransaction.commit();
 			}
 		}, 1000L);
-		if (null != this.mGameContainer) {
-		   this.mGameContainer.setTimerCancelled(true);
-		}
+		
 		this.gameInProgress = 0;
 	}
 
-	/*
+	/**
 	 * Called from asynchronous task, adds validated data
+	 * @param data array with Game Data 
 	 */
 	protected void addGameData(OicrPerson[] data) {
 		this.mGame = new MatchGame(data);
@@ -225,9 +166,9 @@ public class FaceMatchActivity extends Activity implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
+	 * Function for selecting type of activity
+	 * @param position selected in Top Menu
 	 * @see ca.on.oicr.pde.facematcher.TopMenuFragment.OnOptionSelectedListener#
 	 * onOptionSelected(int) Method for communicating with Top Menu Fragment
 	 */
@@ -265,12 +206,10 @@ public class FaceMatchActivity extends Activity implements
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * ca.on.oicr.pde.facematcher.MatchGameFragment.OnOptionSelectedListener#
-	 * onOptionSelected(int) Method for interaction with MatchGameFragment
+	
+	/**
+	 * This function handles answers to quizzes in FaceMatching game(s)
+	 * @param index is an index of thumbnail clicked in  FaceMatching game 
 	 */
 	@Override
 	public void onAnswerSelected(int index) {
@@ -286,6 +225,10 @@ public class FaceMatchActivity extends Activity implements
 		this.updateGame(index);
 	}
 
+	/**
+	 * This function handles responses in NameMatching game
+	 * @param View - needed to get id of the radio button that got clicked
+	 */
 	public void onRadioButtonClicked(View v) {
 		boolean checked = ((RadioButton) v).isChecked();
 		int index = 0;
@@ -294,22 +237,18 @@ public class FaceMatchActivity extends Activity implements
 		case R.id.name_option_1:
 			if (checked)
 				index = 0;
-			//Log.d(FaceMatchActivity.TAG, "Selected Option 1");
 			break;
 		case R.id.name_option_2:
 			if (checked)
 				index = 1;
-			//Log.d(FaceMatchActivity.TAG, "Selected Option 2");
 			break;
 		case R.id.name_option_3:
 			if (checked)
 				index = 2;
-			//Log.d(FaceMatchActivity.TAG, "Selected Option 3");
 			break;
 		case R.id.name_option_4:
 			if (checked)
 				index = 3;
-			//Log.d(FaceMatchActivity.TAG, "Selected Option 4");
 			break;
 		}
 		//Sounds
@@ -325,16 +264,9 @@ public class FaceMatchActivity extends Activity implements
 
 	}
 
-	// @Override
-	/*
-	 * protected void onPostCreate(Bundle savedInstanceState) {
-	 * super.onPostCreate(savedInstanceState);
-	 * 
-	 * // Trigger the initial hide() shortly after the activity has been //
-	 * created, to briefly hint to the user that UI controls // are available.
-	 * delayedHide(100); }
+	/**
+	 * Set up the Game Container and start a new game
 	 */
-
 	private void startGame() {
 		
 		if (null == this.mGame) {
@@ -354,6 +286,11 @@ public class FaceMatchActivity extends Activity implements
 		gameStartTransaction.commit();
 	}
 
+	/**
+	 * This function is responsible for updating ongoing game and
+	 * stopping it if number of quizzes exceeds the limit
+	 * @param answer index of the last answer selected
+	 */
 	private void updateGame(int answer) {
 		
 		if (this.gameInProgress != FaceMatchActivity.FACE_MATCH_TIMED_GAME
@@ -370,8 +307,13 @@ public class FaceMatchActivity extends Activity implements
 		this.mGameContainer.updateGame(answer, mGame.getNextGameSet());
 	}
 
+	/**
+	 * This function checks the final score, sends request for registering this score and 
+	 * displays an appropriate dialog
+	 */
 	private void finishGame() {
 		
+		this.mGameContainer.setTimerCancelled(true);
 		int finalScore = (this.mGameContainer.getCurrentScore() 
 				        + this.mGameContainer.getTimeBonus());
 		String scoreMessage = "Your Score: " + finalScore;
@@ -416,8 +358,8 @@ public class FaceMatchActivity extends Activity implements
 	}
 
 		
-	/*
-	 * Function that initialises and shows leaderboard (scores) fragment
+	/**
+	 * Function that initialises and shows leader board (scores) fragment
 	 */
 	private void showLeaderboard() {
 		Handler fragSwapper = new Handler();
@@ -436,39 +378,8 @@ public class FaceMatchActivity extends Activity implements
 		}, 1000L);
 	}
 
-	/**
-	 * Touch listener to use for in-layout UI controls to delay hiding the
-	 * system UI. This is to prevent the jarring behaviour of controls going
-	 * away while interacting with activity UI.
-	 */
-	/*
-	 * View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener()
-	 * {
-	 * 
-	 * @Override public boolean onTouch(View view, MotionEvent motionEvent) { if
-	 * (AUTO_HIDE) { delayedHide(AUTO_HIDE_DELAY_MILLIS); } return
-	 * view.performClick(); //return false; } };
-	 * 
-	 * Handler mHideHandler = new Handler(); Runnable mHideRunnable = new
-	 * Runnable() {
-	 * 
-	 * @Override public void run() { mSystemUiHider.hide();
-	 * getActionBar().hide(); } };
-	 */
-
-	/**
-	 * Schedules a call to hide() in [delay] milliseconds, canceling any
-	 * previously scheduled calls.
-	 */
-	/*
-	 * private void delayedHide(int delayMillis) {
-	 * mHideHandler.removeCallbacks(mHideRunnable);
-	 * mHideHandler.postDelayed(mHideRunnable, delayMillis); }
-	 */
-
-
 	
-	/*
+	/**
 	 * This is to show a simple 'About' dialog
 	 */
 	@SuppressLint("InflateParams")
@@ -487,8 +398,9 @@ public class FaceMatchActivity extends Activity implements
 	}
 
 	
-	/*
+	/**
 	 * Settings are recorded when an appropriate dialog closes
+	 * @param ConfigureDialogFragment - handle setting new parameters
 	 */
 
 	@Override
@@ -505,6 +417,10 @@ public class FaceMatchActivity extends Activity implements
 				
 	}
 
+	/**
+	 * Function for displaying different ScoreFragments in TopScore container
+	 * @param option type of score banner clicked  
+	 */
 	@Override
 	public void onBannerClicked(int option) {
 		ScoresContainerFragment scoreBox = (ScoresContainerFragment) getFragmentManager().findFragmentByTag("SCORES");
@@ -544,14 +460,14 @@ public class FaceMatchActivity extends Activity implements
 			if (scoreSet.size() >= KEPT_SCORES)
 				break;
 		}
-		Collections.sort(storedScores, SCORECOMPARATOR);
-		
+				
 		sp.edit().putStringSet(gameTypeKey, scoreSet).commit();
         return newTopScore;
 	}
 	
-	/*
-	 * Ringtone playing
+	/**
+	 * playFeedbackTone function plays a sound which id is paased as an argument 
+	 * @param soundResource
 	 */
 	private void playFeedbackTone(int soundResource) {
 
@@ -564,28 +480,10 @@ public class FaceMatchActivity extends Activity implements
 		mediaPlayer.start(); // no need to call prepare(); create() does that for you
 	}
 	
-	/*
-	 * Comparator
-	 */
-	private class ScoreComparator implements Comparator<Score> {
-		public int compare(Score score1, Score score2) {
-			return Integer.valueOf(score2.getScore()).compareTo(
-				   Integer.valueOf(score1.getScore()));
-		}
-	};
-	
-	/**
-	 * If we receive update from MatchGameContainerFragment, finish the game
-	 */
-	class TimerElapseReceiver extends BroadcastReceiver {
 
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Log.d(TAG, "Received Time elapsed intent");
-			FaceMatchActivity.this.finishGame();
-		}
-	}
-
+   /**
+    * This is for shutting down the game #3 when timer is up
+    */
 	@Override
 	public void onTimeElapsed() {
 		this.finishGame();	

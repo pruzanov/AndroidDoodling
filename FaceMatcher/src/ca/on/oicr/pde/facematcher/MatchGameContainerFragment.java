@@ -140,8 +140,10 @@ public class MatchGameContainerFragment extends Fragment {
 			TextView scoreView = (TextView) getView().findViewById(R.id.player_score);
 			scoreView.setText(getResources().getString(R.string.score_string) + this.currentScore);
 		}
-
-		this.constructAndShowNext(nextSet);
+		
+        if (!this.timerCancelled) {
+        	this.constructAndShowNext(nextSet);
+        }
 	}
 
 	private void constructAndShowNext(MatchGame.GameSet set) {
