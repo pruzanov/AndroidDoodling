@@ -1,9 +1,8 @@
 package ca.on.oicr.pde.facematcher;
 
-/*
+/**
  *  Container class for holding score and user name for one game
  */
-
 public class Score {
 		String name;
 		int score;

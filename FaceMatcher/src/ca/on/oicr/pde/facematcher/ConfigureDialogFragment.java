@@ -17,6 +17,11 @@ import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+/**
+ * This is the dialog that takes care of setting parameters such as 
+ * User Name and the state of in-game sounds (enabled or disabled)
+ * 
+ */
 public class ConfigureDialogFragment extends DialogFragment {
 	
 	private boolean soundsEnabled;
