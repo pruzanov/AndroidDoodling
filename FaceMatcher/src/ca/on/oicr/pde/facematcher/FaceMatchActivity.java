@@ -105,6 +105,7 @@ public class FaceMatchActivity extends Activity implements
 						public void onClick(DialogInterface dialog, int id) {
 							// User clicked OK button
 							Log.d(TAG, "User chose to close, exiting...");
+							FaceMatchActivity.this.mGameContainer.cancelTimer();
 							FaceMatchActivity.this.goToTopMenu();
 						}
 					});
@@ -313,7 +314,7 @@ public class FaceMatchActivity extends Activity implements
 	 */
 	private void finishGame() {
 		
-		this.mGameContainer.setTimerCancelled(true);
+		this.mGameContainer.cancelTimer();
 		int finalScore = (this.mGameContainer.getCurrentScore() 
 				        + this.mGameContainer.getTimeBonus());
 		String scoreMessage = "Your Score: " + finalScore;
@@ -337,7 +338,6 @@ public class FaceMatchActivity extends Activity implements
 			    Toast.makeText(FaceMatchActivity.this,
 					"Set User in Settings to enable Top Scores", Toast.LENGTH_LONG).show();		
 		}
-		this.mGameContainer.setTimerCancelled(true);
 		this.gameInProgress = 0;
 		
 		if (this.soundsOn)

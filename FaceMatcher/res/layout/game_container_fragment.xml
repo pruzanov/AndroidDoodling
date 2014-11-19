@@ -16,27 +16,41 @@
             android:id="@+id/player_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
+            android:layout_weight="1"
             android:gravity="start"
             android:text="@string/score_string"
-            android:textSize="25sp"
+            android:textColor="@color/score_color"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/player_time"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_weight="1"
             android:gravity="end"
             android:text="@string/timer_string"
-            android:layout_marginBottom="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
-            android:textSize="25sp"
+            android:textColor="@color/score_color"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:visibility="invisible" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/quizz_counter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-3dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="top|center_horizontal"
+        android:text="@string/counter_string"
+        android:textColor="@color/score_color"
+        android:textSize="16sp"
+        android:textStyle="normal" />
 
     <FrameLayout
         android:id="@+id/game_fragment_frame"
