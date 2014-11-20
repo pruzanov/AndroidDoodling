@@ -17,5 +17,6 @@
     <string name="remote_url_hint">Leaderboard URL</string>
     <string name="user_name_hint">User Name</string>
     <string name="sound_label">In-Game Sounds</string>
+    <string name="counter_string">1 of 10</string>
 
 </resources>

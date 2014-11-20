@@ -6,10 +6,10 @@
 
     <ImageView
         android:id="@+id/banner_name_match"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="top|center_horizontal"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         android:contentDescription="@string/image_type"
         android:background="@color/game2_color"
         android:src="@drawable/banner_game02" />
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="220dp"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginTop="10dp"
         android:contentDescription="@string/image_type"
         android:src="@drawable/deniro" />
@@ -31,7 +31,7 @@
         android:layout_gravity="start"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="20dp"
         android:contentDescription="@string/image_type"
         android:src="@drawable/msg_answer" />
 
@@ -48,33 +48,33 @@
             android:id="@+id/name_option_1"
             android:layout_width="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="8dp"
             android:onClick="onRadioButtonClicked"
             android:text="Dmitri Mendeleev"
-            android:textSize="26sp"
-            android:textStyle="bold"
+            android:textSize="24sp"
+            android:textStyle="normal"
             android:background="@color/neutral_answer" />
 
         <RadioButton
             android:id="@+id/name_option_2"
             android:layout_width="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="8dp"
             android:onClick="onRadioButtonClicked"
             android:text="Jonas Salk"
-            android:textSize="26sp"
-            android:textStyle="bold"
+            android:textSize="24sp"
+            android:textStyle="normal"
             android:background="@color/neutral_answer" />
 
         <RadioButton
             android:id="@+id/name_option_3"
             android:layout_width="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="8dp"
             android:onClick="onRadioButtonClicked"
             android:text="John Carmack"
-            android:textSize="26sp"
-            android:textStyle="bold"
+            android:textSize="24sp"
+            android:textStyle="normal"
             android:background="@color/neutral_answer" />
 
         <RadioButton
@@ -83,8 +83,8 @@
             android:layout_gravity="center_vertical"
             android:onClick="onRadioButtonClicked"
             android:text="Robert De Niro"
-            android:textSize="26sp"
-            android:textStyle="bold"
+            android:textSize="24sp"
+            android:textStyle="normal"
             android:background="@color/neutral_answer" />
     </RadioGroup>
 

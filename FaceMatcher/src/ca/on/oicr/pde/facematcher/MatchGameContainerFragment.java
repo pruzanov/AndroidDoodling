@@ -20,7 +20,8 @@ public class MatchGameContainerFragment extends Fragment {
 	private int currentScore;
 	private int timeBonus;
 	private int gameFragmentCounter;
-	private boolean timerCancelled;
+	private TimerTask mTimer;
+	
 	private MatchGame.GameSet fistSet;
 	protected MatchGame.GameSet getFistSet() {
 		return fistSet;
@@ -74,9 +75,16 @@ public class MatchGameContainerFragment extends Fragment {
 		return gameFragmentCounter;
 	}
 	
-	public void setTimerCancelled(boolean timerCancelled) {
-		this.timerCancelled = timerCancelled;
+	//public void setTimerCancelled(boolean timerCancelled) {
+	//	this.timerCancelled = timerCancelled;
+	//}
+	
+	public void cancelTimer() {
+		if (null != this.mTimer && !this.mTimer.isCancelled())
+			this.mTimer.cancel(true);
 	}
+	
+	
 	
 	// FaceMatchFragment version
 	public static MatchGameContainerFragment instanceOf(int gameType) {
@@ -85,7 +93,6 @@ public class MatchGameContainerFragment extends Fragment {
 		fragment.setCurrentScore(0);
 		fragment.setTimeBonus(MAX_TIME_BONUS);
 		fragment.setGameFragmentCounter(0);
-		fragment.setTimerCancelled(false);
 	
 		return fragment;
 	}
@@ -110,18 +117,35 @@ public class MatchGameContainerFragment extends Fragment {
 				container, false);
         if (this.currentType == FaceMatchActivity.FACE_MATCH_TIMED_GAME) {
         	rootView.findViewById(R.id.player_time).setVisibility(View.VISIBLE);
+        	rootView.findViewById(R.id.quizz_counter).setVisibility(View.INVISIBLE);
         } else {
         	rootView.findViewById(R.id.player_time).setVisibility(View.INVISIBLE);
+        	TextView countText = (TextView) rootView.findViewById(R.id.quizz_counter);
+        	rootView.setVisibility(View.VISIBLE);
+		    countText.setText(this.getGameFragmentCounter() + " of " + QUIZES_COUNT);
         }
+		
 		return rootView;
+	}
+	
+	private void updateQuizCounter() {
+		if (this.currentType == FaceMatchActivity.NAME_MATCH_GAME ||
+				this.currentType == FaceMatchActivity.FACE_MATCH_GAME) {
+			    TextView countText = (TextView) this.getView().findViewById(R.id.quizz_counter);
+			    countText.setText(this.getGameFragmentCounter() + " of " + QUIZES_COUNT);
+			}
 	}
 
 	private void startGame() {
-		new TimerTask().execute(FaceMatchActivity.GAME_SPAN);
-		this.updateGame(-1, this.getFistSet());
+		if (null != this.mTimer && !this.mTimer.isCancelled())
+			this.mTimer.cancel(true);
+		this.mTimer = new TimerTask();
+		this.mTimer.execute(FaceMatchActivity.GAME_SPAN);
+		this.updateGame(-1, this.getFistSet(), true);
+	
 	}
 
-	protected void updateGame(int answer, GameSet nextSet) {
+	protected void updateGame(int answer, GameSet nextSet, boolean moveToNext) {
 		// Reveal answers if user made a choice
 		if (answer >= 0) {
 			try {
@@ -139,11 +163,16 @@ public class MatchGameContainerFragment extends Fragment {
 			//Update Score feedback
 			TextView scoreView = (TextView) getView().findViewById(R.id.player_score);
 			scoreView.setText(getResources().getString(R.string.score_string) + this.currentScore);
+				
 		}
 		
-        if (!this.timerCancelled) {
-        	this.constructAndShowNext(nextSet);
-        }
+		if (moveToNext) {
+			this.constructAndShowNext(nextSet);
+			if (answer >= 0) {
+			    updateQuizCounter();
+			}
+		}
+		
 	}
 
 	private void constructAndShowNext(MatchGame.GameSet set) {
@@ -231,7 +260,7 @@ public class MatchGameContainerFragment extends Fragment {
 		protected void onPostExecute(Void result) {
 			if (currentType == FaceMatchActivity.FACE_MATCH_TIMED_GAME) {
 				Log.d(FaceMatchActivity.TAG, "Sending Time Elapsed Intent");
-			    mCallback.onTimeElapsed();
+				mCallback.onTimeElapsed();
 			}
 		}
 	
@@ -249,12 +278,13 @@ public class MatchGameContainerFragment extends Fragment {
 		protected Void doInBackground(Integer... params) {
 			int timerSeconds = params[0];
 			for (int t = 0; t <= params[0]; t++) {
-				if (MatchGameContainerFragment.this.timerCancelled)
-					break;
+				//if (MatchGameContainerFragment.this.isTimerCancelled())
+				//	break;
 				try {
 					Thread.sleep(1000L); // one second tick
 				} catch (InterruptedException ie) {
 					Log.d(FaceMatchActivity.TAG, "Timer Thread was interupted");
+					return null;
 				}
 				timerSeconds--;
 				int progress = (int) ((1.0f - (t / (float) params[0])) * MAX_TIME_BONUS);

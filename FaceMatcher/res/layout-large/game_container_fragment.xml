@@ -22,7 +22,7 @@
             android:gravity="start"
             android:text="@string/score_string"
             android:textColor="@color/score_color"
-            android:textSize="20sp"
+            android:textSize="28sp"
             android:textStyle="bold" />
 
         <TextView
@@ -35,7 +35,7 @@
             android:gravity="end"
             android:text="@string/timer_string"
             android:textColor="@color/score_color"
-            android:textSize="20sp"
+            android:textSize="28sp"
             android:textStyle="bold"
             android:visibility="invisible" />
     </LinearLayout>
@@ -49,7 +49,7 @@
         android:gravity="top|center_horizontal"
         android:text="@string/counter_string"
         android:textColor="@color/score_color"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:textStyle="normal" />
 
     <FrameLayout
