@@ -132,8 +132,7 @@ public class MatchGameContainerFragment extends Fragment {
 		if (this.currentType == FaceMatchActivity.NAME_MATCH_GAME ||
 				this.currentType == FaceMatchActivity.FACE_MATCH_GAME) {
 			    TextView countText = (TextView) this.getView().findViewById(R.id.quizz_counter);
-			    String updatedCount = (this.getGameFragmentCounter() + 1) + " of " + QUIZES_COUNT;
-			    countText.setText(updatedCount);
+			    countText.setText(this.getGameFragmentCounter() + " of " + QUIZES_COUNT);
 			}
 	}
 
@@ -142,12 +141,11 @@ public class MatchGameContainerFragment extends Fragment {
 			this.mTimer.cancel(true);
 		this.mTimer = new TimerTask();
 		this.mTimer.execute(FaceMatchActivity.GAME_SPAN);
-		this.updateGame(-1, this.getFistSet());
-		
-		
+		this.updateGame(-1, this.getFistSet(), true);
+	
 	}
 
-	protected void updateGame(int answer, GameSet nextSet) {
+	protected void updateGame(int answer, GameSet nextSet, boolean moveToNext) {
 		// Reveal answers if user made a choice
 		if (answer >= 0) {
 			try {
@@ -165,10 +163,16 @@ public class MatchGameContainerFragment extends Fragment {
 			//Update Score feedback
 			TextView scoreView = (TextView) getView().findViewById(R.id.player_score);
 			scoreView.setText(getResources().getString(R.string.score_string) + this.currentScore);
-			updateQuizCounter();
+				
 		}
 		
-        	this.constructAndShowNext(nextSet);
+		if (moveToNext) {
+			this.constructAndShowNext(nextSet);
+			if (answer >= 0) {
+			    updateQuizCounter();
+			}
+		}
+		
 	}
 
 	private void constructAndShowNext(MatchGame.GameSet set) {

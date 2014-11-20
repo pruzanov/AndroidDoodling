@@ -293,19 +293,19 @@ public class FaceMatchActivity extends Activity implements
 	 * @param answer index of the last answer selected
 	 */
 	private void updateGame(int answer) {
-		
+	
 		if (this.gameInProgress != FaceMatchActivity.FACE_MATCH_TIMED_GAME
-				&& this.mGameContainer.getGameFragmentCounter() >= QUIZES_COUNT) {
+				&& this.mGameContainer.getGameFragmentCounter() >= QUIZES_COUNT) {	
+			this.mGameContainer.updateGame(answer, mGame.getNextGameSet(), false);
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException ie) {
 				Log.e(FaceMatchActivity.TAG, "Interrupted");
 			}
 			this.finishGame();
-			return;
+		} else {
+			this.mGameContainer.updateGame(answer, mGame.getNextGameSet(), true);
 		}
-		
-		this.mGameContainer.updateGame(answer, mGame.getNextGameSet());
 	}
 
 	/**
