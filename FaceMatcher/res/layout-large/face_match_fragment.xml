@@ -8,8 +8,8 @@
     <ImageView
         android:id="@+id/banner_face_match"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:scaleType="fitXY"
+        android:layout_height="90dp"
+        android:scaleType="centerInside"
         android:layout_gravity="top|center_horizontal"
         android:layout_marginBottom="25dp"
         android:contentDescription="@string/image_type"
@@ -19,7 +19,7 @@
     <LinearLayout
         android:id="@+id/face_thumb_row1"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:layout_gravity="top|fill_horizontal"
         android:measureWithLargestChild="true"
         android:baselineAligned="false"
@@ -28,12 +28,12 @@
         <RelativeLayout
         android:id="@+id/face_thumbnail_1_container"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:layout_weight="1" >
         <ImageView
             android:id="@+id/face_thumbnail_1"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="250dp"
             android:layout_marginBottom="10dp"
             android:layout_centerInParent="true"
             android:contentDescription="@string/image_type"
@@ -52,12 +52,12 @@
         <RelativeLayout
         android:id="@+id/face_thumbnail_2_container"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:layout_weight="1" >
         <ImageView
             android:id="@+id/face_thumbnail_2"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="250dp"
             android:layout_marginBottom="10dp"
             android:layout_centerInParent="true"
             android:contentDescription="@string/image_type"
@@ -77,7 +77,7 @@
     <LinearLayout
         android:id="@+id/face_thumb_row2"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:layout_gravity="top|fill_horizontal"
         android:measureWithLargestChild="true"
         android:baselineAligned="false"
@@ -86,12 +86,12 @@
         <RelativeLayout
         android:id="@+id/face_thumbnail_3_container"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:layout_weight="1" >
         <ImageView
             android:id="@+id/face_thumbnail_3"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="250dp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:layout_centerInParent="true"
@@ -111,12 +111,12 @@
         <RelativeLayout
         android:id="@+id/face_thumbnail_4_container"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:layout_weight="1" >
         <ImageView
             android:id="@+id/face_thumbnail_4"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="250dp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:layout_centerInParent="true"
@@ -141,7 +141,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:text="@string/sample_name_string"
-        android:textSize="42sp"
+        android:textSize="40sp"
         android:fontFamily="sans-serif"
         android:textStyle="normal" />
 

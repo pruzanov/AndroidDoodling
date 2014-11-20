@@ -354,6 +354,7 @@ public class FaceMatchActivity extends Activity implements
 				});
 
 		AlertDialog dialog = builder.create();
+		dialog.setCancelable(false);
 		dialog.show();
 	}
 
