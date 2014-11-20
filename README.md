@@ -6,4 +6,4 @@ A project for memory development - guess who are all these people and score! WIP
 
 ##Sample Screenshots
 Screenshots have been produced with the generic data that come with the project.
-![screenshot_1](docs/FaceMatcher_screenshot01.png)
+![screenshot_1](FaceMatcher/docs/FaceMatcher_screenshot01.png)
