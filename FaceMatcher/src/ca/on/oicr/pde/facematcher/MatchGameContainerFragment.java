@@ -131,8 +131,15 @@ public class MatchGameContainerFragment extends Fragment {
 	private void updateQuizCounter() {
 		if (this.currentType == FaceMatchActivity.NAME_MATCH_GAME ||
 				this.currentType == FaceMatchActivity.FACE_MATCH_GAME) {
-			    TextView countText = (TextView) this.getView().findViewById(R.id.quizz_counter);
-			    countText.setText(this.getGameFragmentCounter() + " of " + QUIZES_COUNT);
+			    final TextView countText = (TextView) this.getView().findViewById(R.id.quizz_counter);
+			    final String newCount = this.getGameFragmentCounter() + " of " + QUIZES_COUNT;
+			    Handler quizCounPost = new Handler();
+			    quizCounPost.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						countText.setText(newCount);
+					}
+			    }, 1500L);
 			}
 	}
 

@@ -98,8 +98,7 @@ public class FaceMatchActivity extends Activity implements
 		if (this.gameInProgress > 0) {
 			//TODO pause timer! We don't need it to keep counting
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setIcon(R.drawable.ic_action_warning);
-			builder.setTitle(R.string.game_close_warning);
+			builder.setView(this.getLayoutInflater().inflate(R.layout.quit_confirm_dialog, null));
 			builder.setPositiveButton(R.string.ok,
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
