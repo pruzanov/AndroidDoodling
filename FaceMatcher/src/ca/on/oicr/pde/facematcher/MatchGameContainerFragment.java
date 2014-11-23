@@ -192,7 +192,7 @@ public class MatchGameContainerFragment extends Fragment {
 		if (this.currentType == FaceMatchActivity.NAME_MATCH_GAME) {
 			Drawable thumb = getResources().getDrawable(
 					getResources().getIdentifier(set.URLs[set.indexMe],
-							"drawable", this.getClass().getPackage().getName()));
+							"raw", this.getClass().getPackage().getName()));
 			nextFragment = MatchGameFragment.instanceOf(thumb, set.peopleNames,
 					set.indexMe, this.currentScore);
 			this.updateCurrentFragment(nextFragment);
@@ -201,7 +201,7 @@ public class MatchGameContainerFragment extends Fragment {
 			Drawable[] thumbs = new Drawable[OPTIONS_COUNT];
 			for (int d = 0; d < OPTIONS_COUNT; d++) {
 				thumbs[d] = getResources().getDrawable(
-						getResources().getIdentifier(set.URLs[d], "drawable",
+						getResources().getIdentifier(set.URLs[d], "raw",
 								this.getClass().getPackage().getName()));
 			}
 			boolean timer = this.currentType == FaceMatchActivity.FACE_MATCH_TIMED_GAME ? true

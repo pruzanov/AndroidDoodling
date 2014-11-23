@@ -55,7 +55,7 @@
             android:layout_weight="0.8"
             android:background="@android:color/transparent"
             android:contentDescription="@string/image_type"
-            android:src="@drawable/logo_app" />
+            android:src="@drawable/logo_app_beta" />
         
     <LinearLayout
         android:id="@+id/game_buttons"

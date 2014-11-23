@@ -57,7 +57,7 @@ public class DataLoaderTask extends AsyncTask<Void, Void, OicrPerson[]> {
 
 		Log.d(FaceMatchActivity.TAG,
 				"Will Load the data from static people.json");
-		InputStream fis = res.openRawResource(R.raw.people);
+		InputStream fis = res.openRawResource(R.raw.oicr_people);
 		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
 		while (null != (jsonLine = br.readLine())) {
@@ -85,7 +85,7 @@ public class DataLoaderTask extends AsyncTask<Void, Void, OicrPerson[]> {
 					newPerson.setImageID(this.mParent
 							.get()
 							.getResources()
-							.getIdentifier(newPerson.imageURL, "drawable", // drawable for debugging, raw for real data
+							.getIdentifier(newPerson.imageURL, "raw", // drawable for debugging, raw for real data
 									this.mParent.get().getPackageName()));
 					if (newPerson.isValid())
 						dataAsList.add(newPerson);
