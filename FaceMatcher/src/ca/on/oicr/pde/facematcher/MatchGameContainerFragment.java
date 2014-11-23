@@ -21,16 +21,8 @@ public class MatchGameContainerFragment extends Fragment {
 	private int timeBonus;
 	private int gameFragmentCounter;
 	private TimerTask mTimer;
-	
 	private MatchGame.GameSet fistSet;
-	protected MatchGame.GameSet getFistSet() {
-		return fistSet;
-	}
-
-	protected void setFistSet(MatchGame.GameSet fistSet) {
-		this.fistSet = fistSet;
-	}
-
+	private boolean timerPaused;
 	private static final int MAX_TIME = 600;
 	// Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
@@ -46,7 +38,23 @@ public class MatchGameContainerFragment extends Fragment {
 			public void onTimeElapsed();
 	}
 	
-	// Setters for game parameters
+	// Setters and Getters for game parameters
+    protected boolean isTimerPaused() {
+		return timerPaused;
+	}
+
+	protected void setTimerPaused(boolean timerPaused) {
+		this.timerPaused = timerPaused;
+	}
+    
+    protected void setFistSet(MatchGame.GameSet fistSet) {
+		this.fistSet = fistSet;
+	}
+    
+    protected MatchGame.GameSet getFistSet() {
+		return fistSet;
+	}
+    
 	public void setGameType(int currentType) {
 		this.currentType = currentType;
 	}
@@ -75,16 +83,11 @@ public class MatchGameContainerFragment extends Fragment {
 		return gameFragmentCounter;
 	}
 	
-	//public void setTimerCancelled(boolean timerCancelled) {
-	//	this.timerCancelled = timerCancelled;
-	//}
-	
 	public void cancelTimer() {
 		if (null != this.mTimer && !this.mTimer.isCancelled())
 			this.mTimer.cancel(true);
 	}
-	
-	
+
 	
 	// FaceMatchFragment version
 	public static MatchGameContainerFragment instanceOf(int gameType) {
@@ -93,7 +96,7 @@ public class MatchGameContainerFragment extends Fragment {
 		fragment.setCurrentScore(0);
 		fragment.setTimeBonus(MAX_TIME_BONUS);
 		fragment.setGameFragmentCounter(0);
-	
+	    fragment.setTimerPaused(false);
 		return fragment;
 	}
 
@@ -285,13 +288,18 @@ public class MatchGameContainerFragment extends Fragment {
 		protected Void doInBackground(Integer... params) {
 			int timerSeconds = params[0];
 			for (int t = 0; t <= params[0]; t++) {
-				//if (MatchGameContainerFragment.this.isTimerCancelled())
-				//	break;
+				
 				try {
-					Thread.sleep(1000L); // one second tick
+					  Thread.sleep(1000L); // one second tick				
 				} catch (InterruptedException ie) {
 					Log.d(FaceMatchActivity.TAG, "Timer Thread was interupted");
 					return null;
+				}
+				// This code may (or may not) be buggy
+				if (isTimerPaused()) {
+					  Log.d(FaceMatchActivity.TAG, "Timer is on pause...");
+					  t--;
+					  continue;
 				}
 				timerSeconds--;
 				int progress = (int) ((1.0f - (t / (float) params[0])) * MAX_TIME_BONUS);
