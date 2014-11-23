@@ -321,14 +321,15 @@ public class FaceMatchActivity extends Activity implements
 		// SHOW SCORE - if score makes it to the top, notify player
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		View dialogView = this.getLayoutInflater().inflate(R.layout.complete_dialog, null);
-		TextView scoreView = (TextView) dialogView.findViewById(R.id.gameover_text);
-		scoreView.setText(scoreMessage);
 		// check if user name set, if yes, show Top score icon
 		ImageView topScore = (ImageView) dialogView.findViewById(R.id.topscore_icon);
+		TextView scoreView = (TextView) dialogView.findViewById(R.id.gameover_text);
 		int soundResource;
 		if (!this.userName.isEmpty() && !this.userName.equals(DEFAULT_USER) 
 				&& this.addNewScores(TopScoreAdapter.SCORE_SET_PREFIX + this.gameInProgress)) {
 			topScore.setVisibility(ImageView.VISIBLE);
+			scoreView.setTextColor(getResources().getColor(R.color.right_answer));
+			scoreMessage = "New Top Score: " + finalScore;
 			soundResource = R.raw.allegro;
 		} else { // if user name NOT set, show warning as toast message
 			topScore.setVisibility(ImageView.INVISIBLE);
@@ -337,6 +338,7 @@ public class FaceMatchActivity extends Activity implements
 			    Toast.makeText(FaceMatchActivity.this,
 					"Set User in Settings to enable Top Scores", Toast.LENGTH_LONG).show();		
 		}
+		scoreView.setText(scoreMessage);
 		this.gameInProgress = 0;
 		
 		if (this.soundsOn)
