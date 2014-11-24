@@ -38,7 +38,7 @@ public class FaceMatchActivity extends Activity implements
 
 	// Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
-	protected static final int QUIZES_COUNT  = 5;
+	protected static final int QUIZES_COUNT  = 10;
 	protected static final String TAG = "FaceMatcher";
 	// Supported Game types:
 	public static final int NAME_MATCH_GAME       = 1;

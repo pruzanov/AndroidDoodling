@@ -24,13 +24,6 @@ public class MatchGameContainerFragment extends Fragment {
 	private MatchGame.GameSet fistSet;
 	private boolean timerPaused;
 	private static final int MAX_TIME = 600;
-	// Game Parameters:
-	protected static final int OPTIONS_COUNT = 4;
-	protected static final int QUIZES_COUNT = 10;
-	// Special bonus for speed
-	protected static final int MAX_TIME_BONUS = 100;
-	protected static final int GUESSED_RIGHT_SCORE = 15;
-	protected static final int GAME_SPAN = 60;
     OnTimeElapsedListener mCallback;
 	
 	// Container Activity must implement this interface
@@ -94,7 +87,7 @@ public class MatchGameContainerFragment extends Fragment {
 		MatchGameContainerFragment fragment = new MatchGameContainerFragment();
         fragment.setGameType(gameType);
 		fragment.setCurrentScore(0);
-		fragment.setTimeBonus(MAX_TIME_BONUS);
+		fragment.setTimeBonus(FaceMatchActivity.MAX_TIME_BONUS);
 		fragment.setGameFragmentCounter(0);
 	    fragment.setTimerPaused(false);
 		return fragment;
@@ -125,7 +118,7 @@ public class MatchGameContainerFragment extends Fragment {
         	rootView.findViewById(R.id.player_time).setVisibility(View.INVISIBLE);
         	TextView countText = (TextView) rootView.findViewById(R.id.quizz_counter);
         	rootView.setVisibility(View.VISIBLE);
-		    countText.setText(this.getGameFragmentCounter() + " of " + QUIZES_COUNT);
+		    countText.setText(this.getGameFragmentCounter() + " of " + FaceMatchActivity.QUIZES_COUNT);
         }
 		
 		return rootView;
@@ -135,7 +128,7 @@ public class MatchGameContainerFragment extends Fragment {
 		if (this.currentType == FaceMatchActivity.NAME_MATCH_GAME ||
 				this.currentType == FaceMatchActivity.FACE_MATCH_GAME) {
 			    final TextView countText = (TextView) this.getView().findViewById(R.id.quizz_counter);
-			    final String newCount = this.getGameFragmentCounter() + " of " + QUIZES_COUNT;
+			    final String newCount = this.getGameFragmentCounter() + " of " + FaceMatchActivity.QUIZES_COUNT;
 			    Handler quizCounPost = new Handler();
 			    quizCounPost.postDelayed(new Runnable() {
 					@Override
@@ -163,7 +156,7 @@ public class MatchGameContainerFragment extends Fragment {
 						.findFragmentByTag("CURRENT");
 				current.showAnswers(answer);
 				if (answer == current.getRightAnswer()) {
-					setCurrentScore(this.currentScore += GUESSED_RIGHT_SCORE);
+					setCurrentScore(this.currentScore += FaceMatchActivity.GUESSED_RIGHT_SCORE);
 				}
 			} catch (Exception e) {
 				Log.e(FaceMatchActivity.TAG,
@@ -198,8 +191,8 @@ public class MatchGameContainerFragment extends Fragment {
 			this.updateCurrentFragment(nextFragment);
 		} else if (this.currentType == FaceMatchActivity.FACE_MATCH_GAME
 				|| this.currentType == FaceMatchActivity.FACE_MATCH_TIMED_GAME) {
-			Drawable[] thumbs = new Drawable[OPTIONS_COUNT];
-			for (int d = 0; d < OPTIONS_COUNT; d++) {
+			Drawable[] thumbs = new Drawable[FaceMatchActivity.OPTIONS_COUNT];
+			for (int d = 0; d < FaceMatchActivity.OPTIONS_COUNT; d++) {
 				thumbs[d] = getResources().getDrawable(
 						getResources().getIdentifier(set.URLs[d], "raw",
 								this.getClass().getPackage().getName()));
@@ -302,7 +295,7 @@ public class MatchGameContainerFragment extends Fragment {
 					  continue;
 				}
 				timerSeconds--;
-				int progress = (int) ((1.0f - (t / (float) params[0])) * MAX_TIME_BONUS);
+				int progress = (int) ((1.0f - (t / (float) params[0])) * FaceMatchActivity.MAX_TIME_BONUS);
 				Log.d(FaceMatchActivity.TAG, "Progress is " + progress);
 
 				this.publishProgress(progress, timerSeconds);
