@@ -26,11 +26,11 @@ public class MatchGameContainerFragment extends Fragment {
 	private static final int MAX_TIME = 600;
 	// Game Parameters:
 	protected static final int OPTIONS_COUNT = 4;
-	protected static final int QUIZES_COUNT = 5;
+	protected static final int QUIZES_COUNT = 10;
 	// Special bonus for speed
 	protected static final int MAX_TIME_BONUS = 100;
 	protected static final int GUESSED_RIGHT_SCORE = 15;
-	protected static final int GAME_SPAN = 120;
+	protected static final int GAME_SPAN = 60;
     OnTimeElapsedListener mCallback;
 	
 	// Container Activity must implement this interface
