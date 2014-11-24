@@ -63,6 +63,7 @@ public class ScoreFragment extends Fragment {
 
 		View rootView = inflater.inflate(R.layout.score_fragment, container,
 				false);
+		rootView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 		// Configure banner
 		ImageView banner = (ImageView) rootView.findViewById(R.id.banner_score);
 
