@@ -59,7 +59,7 @@ sub add_to_results {
  }
  $fh->close();
 
-  while($html_text=~/Items\d*_files\/(.\w+?.jpg)".+?="ms-cellstyle ms-vb2\">(.+?)<\/td/igc) {
+  while($html_text=~/Items\d*_files\/(.\S+?.jpg)".+?="ms-cellstyle ms-vb2\">(.+?)<\/td/igc) {
        my $image = basename($1);
        my $name  = $2;
        ($image,$name) = ($1,$2) if $name=~m!/(\S+?.jpg)\"\s+alt=\"(.+?)\"!i;
