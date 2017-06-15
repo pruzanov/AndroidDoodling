@@ -1,6 +1,8 @@
 package ca.on.oicr.pde.facematcher;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,6 +42,7 @@ public class FaceMatchActivity extends Activity implements
 	protected static final int OPTIONS_COUNT = 4;
 	protected static final int QUIZES_COUNT  = 10;
 	protected static final String TAG = "FaceMatcher";
+	private final Comparator<Score> SCORECOMPARATOR = new ScoreComparator();
 	// Supported Game types:
 	public static final int NAME_MATCH_GAME       = 1;
 	public static final int FACE_MATCH_GAME       = 2;
@@ -459,6 +462,7 @@ public class FaceMatchActivity extends Activity implements
 		}
 		storedScores.add(new Score(this.userName, this.currentScore));
 				
+		Collections.sort(storedScores, SCORECOMPARATOR);
 		for (Score score : storedScores) {
 			scoreSet.add(score.toString());
 			if (scoreSet.size() >= KEPT_SCORES)

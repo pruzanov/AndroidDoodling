@@ -36,7 +36,6 @@ public class TopScoreAdapter extends ArrayAdapter<Score> {
 		inflater = LayoutInflater.from(this.mContext);
 		this.list = new ArrayList<Score>();
 		this.list = this.readScores(SCORE_SET_PREFIX + this.mGameType);
-		Collections.sort(this.list, SCORECOMPARATOR);
 		while (this.list.size() < this.showRows)
 			this.list.add(new Score(EMPTY,0));
 	}
@@ -105,18 +104,8 @@ public class TopScoreAdapter extends ArrayAdapter<Score> {
 		for (String s : tokenizedScores) {
 			scores.add(new Score(s, TopScoreAdapter.delimiter));
 		}
+		Collections.sort(scores, SCORECOMPARATOR);
 		return scores;
 	}
-	
-	/*
-	 * Comparator
-	 */
-	private class ScoreComparator implements Comparator<Score> {
-		public int compare(Score score1, Score score2) {
-			return Integer.valueOf(score2.getScore()).compareTo(
-				   Integer.valueOf(score1.getScore()));
-		}
-	};
-
 	
 }
